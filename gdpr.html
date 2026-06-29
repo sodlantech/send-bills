@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDPR Compliance — Send-Bills.com</title>
+<meta name="description" content="GDPR Compliance & Data Subject Rights. Learn about your data privacy rights under the EU General Data Protection Regulation. Send-Bills.com respects your privacy.">
+<meta name="keywords" content="GDPR, data privacy, data subject rights, EU data protection, Send-Bills.com GDPR">
+<meta name="robots" content="index, follow">
+<meta name="robots" content="noai, noimageai">
+<meta name="AdsBot-Google" content="noindex">
+<meta http-equiv="X-Robots-Tag" content="noai, noimageai, nocache">
+<link rel="canonical" href="https://send-bills.com/gdpr.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D9488'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='900' fill='white'%3E%24%3C/text%3E%3Cpath d='M18 5l-4 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M14 17l-2 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827;line-height:1.7}
+  .navbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{font-size:20px;font-weight:800;color:#0D9488;display:flex;align-items:center;gap:8px;text-decoration:none}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-back{font-size:13px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 14px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-back:hover{background:#CCFBF1}
+  .content{max-width:740px;margin:0 auto;padding:48px 24px 80px}
+  h1{font-size:32px;font-weight:800;color:#111827;margin-bottom:8px}
+  .last-updated{font-size:13px;color:#9CA3AF;margin-bottom:32px}
+  h2{font-size:18px;font-weight:700;color:#0D9488;margin-top:32px;margin-bottom:12px}
+  p{font-size:15px;color:#374151;margin-bottom:16px}
+  ul{margin:0 0 16px 20px}
+  li{font-size:15px;color:#374151;margin-bottom:8px}
+  .footer{text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;font-size:12px;color:#9CA3AF;background:#fff}
+  .footer a{color:#0D9488;text-decoration:none}
+  .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+  .nav-right{display:flex;align-items:center;gap:10px}
+  .nav-login-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #CCFBF1;background:#F0FDFA;color:#0D9488;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .nav-login-btn:hover{background:#CCFBF1}
+  .nav-user-menu{display:none;align-items:center;gap:10px}
+  .nav-user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid #CCFBF1;object-fit:cover}
+  .nav-user-name{font-size:12px;font-weight:600;color:#111827;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-history-link{display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 12px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-history-link:hover{background:#CCFBF1}
+  .nav-signout-btn{font-size:11px;color:#9CA3AF;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 8px;border-radius:6px;transition:all .15s}
+  .nav-signout-btn:hover{background:#FEF2F2;color:#EF4444}
+  @media(max-width:600px){
+    .navbar{padding:0 10px;height:48px;gap:6px}
+    .nav-logo{font-size:15px;gap:5px}
+    .nav-logo svg{width:20px;height:20px}
+    .nav-right{gap:4px;flex-wrap:nowrap}
+    .nav-back{font-size:10px;padding:4px 6px;white-space:nowrap}
+    .nav-login-btn{padding:4px 6px;font-size:10px}
+    .nav-login-btn svg{width:12px;height:12px}
+    .nav-user-name{display:none}
+    .nav-history-link{padding:4px 6px;font-size:10px}
+    .nav-signout-btn{font-size:9px;padding:2px 4px}
+    .nav-user-avatar{width:24px;height:24px}
+    .content{padding:20px 12px 48px}
+    h1{font-size:22px}
+    h2{font-size:16px}
+    p{font-size:13px}
+    .footer-links{gap:8px}
+    .footer-links a{font-size:11px}
+    li{font-size:13px}
+  }
+  /* ===== SITE PROTECTION ===== */
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+  @media print{body{display:none!important}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="7" fill="#0D9488"/><text x="16" y="23" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="white">$</text><path d="M18 5l-4 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/><path d="M14 17l-2 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/></svg>
+    Send-Bills.com
+  </a>
+  <div class="nav-right">
+    <a href="invoice-history.html" class="nav-history-link" id="navHistoryLink">History</a>
+    <a href="index.html" class="nav-back">Back to Invoice Generator</a>
+    <button class="nav-login-btn" id="navLoginBtn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Sign in
+    </button>
+    <div class="nav-user-menu" id="navUserMenu">
+      <img class="nav-user-avatar" id="navUserAvatar" src="" alt="">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-signout-btn" onclick="signOutUser()">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <h1>GDPR Compliance</h1>
+  <p class="last-updated">Last updated: March 19, 2026</p>
+
+  <h2>1. Introduction</h2>
+  <p>Send-Bills.com is committed to complying with the General Data Protection Regulation (GDPR) and protecting the rights of data subjects in the European Union and EEA. This notice outlines how we handle personal data and your rights under GDPR.</p>
+
+  <h2>2. Data Controller</h2>
+  <p>Send-Bills.com operates as the Data Controller for personal information collected through our free invoice generator service. We are responsible for determining how and why personal data is processed.</p>
+
+  <h2>3. Legal Basis for Processing</h2>
+  <p>We process personal data based on the following legal grounds:</p>
+  <ul>
+    <li><strong>Consent:</strong> We obtain your explicit consent before processing certain types of personal data, such as for marketing communications or optional analytics.</li>
+    <li><strong>Legitimate Interest:</strong> We process data to maintain our service, prevent fraud, ensure security, and improve our website functionality.</li>
+    <li><strong>Contract:</strong> Processing may be necessary to fulfill contractual obligations when you use our service or create an account.</li>
+  </ul>
+
+  <h2>4. Your Rights Under GDPR</h2>
+  <p>As a data subject, you have the following rights:</p>
+  <ul>
+    <li><strong>Right to Access:</strong> You have the right to request a copy of personal data we hold about you.</li>
+    <li><strong>Right to Rectification:</strong> You have the right to request correction of inaccurate or incomplete personal data.</li>
+    <li><strong>Right to Erasure:</strong> You have the right to request deletion of your personal data (the "right to be forgotten").</li>
+    <li><strong>Right to Restrict Processing:</strong> You have the right to request that we limit how we use your personal data.</li>
+    <li><strong>Right to Data Portability:</strong> You have the right to request and receive your personal data in a structured, commonly used, and machine-readable format.</li>
+    <li><strong>Right to Object:</strong> You have the right to object to certain types of processing, including direct marketing.</li>
+    <li><strong>Right to Withdraw Consent:</strong> If we process data based on your consent, you can withdraw that consent at any time.</li>
+    <li><strong>Right to Lodge a Complaint:</strong> You have the right to lodge a complaint with your local data protection authority if you believe we have violated your rights.</li>
+  </ul>
+
+  <h2>5. How to Exercise Your Rights</h2>
+  <p>To exercise any of your GDPR rights, please email us at <strong>data-protection@send-bills.com</strong> with your request. Include relevant details about your request and any supporting documentation. We will respond to your request within 30 days or inform you if we need additional time to process your request.</p>
+
+  <h2>6. Data Processing Activities</h2>
+  <p>We process the following categories of personal data:</p>
+  <ul>
+    <li><strong>Invoice Data:</strong> Business names, addresses, item descriptions, and payment amounts. This data is processed locally in your browser and never stored on our servers.</li>
+    <li><strong>Account Data:</strong> If you create an account, we collect your name, email address, and authentication information. This data is retained for the duration of your account.</li>
+    <li><strong>Usage Data:</strong> Analytics information including pages visited, time spent on site, browser type, and device type. This is retained for up to 26 months.</li>
+    <li><strong>Log Data:</strong> IP addresses, browser type, referring pages, and timestamps. Server logs are typically retained for 30 days.</li>
+  </ul>
+
+  <h2>7. International Data Transfers</h2>
+  <p>Some of our service providers, including Firebase and Google Cloud, are located outside the EU. We rely on the EU-US Data Privacy Framework and Standard Contractual Clauses to ensure adequate safeguards for transferring personal data internationally.</p>
+
+  <h2>8. Data Protection Officer</h2>
+  <p>For questions about data protection practices or to contact our Data Protection Officer, please email <strong>data-protection@send-bills.com</strong>.</p>
+
+  <h2>9. Cookies and Consent</h2>
+  <p>We use cookies to enhance your browsing experience and measure website performance. Please refer to our <a href="cookies-policy.html">Cookie Policy</a> for detailed information about how we use cookies and how to manage your cookie preferences.</p>
+
+  <h2>10. Changes to This Notice</h2>
+  <p>We may update this GDPR notice from time to time to reflect changes in our practices or legal requirements. We will post any significant changes on this page and update the "Last updated" date. We encourage you to review this notice periodically.</p>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="index.html">Invoice Generator</a>
+    <a href="invoice-history.html">Invoice History</a>
+    <a href="payment-settings.html">Payment Settings</a>
+    <a href="about.html">About Us</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="cookies-policy.html">Cookie Policy</a>
+    <a href="gdpr.html">GDPR</a>
+    <a href="ccpa.html">CCPA</a>
+    <a href="contact.html">Contact Us</a>
+  </div>
+  <p>&copy; 2026 Send-Bills.com — Free Invoice Generator. All rights reserved.</p>
+</div>
+<script src="cookie-consent.js"></script>
+<script src="site-protection.js"></script>
+</body>
+</html>

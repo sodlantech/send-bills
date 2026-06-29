@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Invoice — Send-Bills.com</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D9488'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='900' fill='white'%3E%24%3C/text%3E%3Cpath d='M18 5l-4 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M14 17l-2 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827;min-height:100vh}
+  .top-bar{background:#0D9488;color:#fff;text-align:center;padding:10px;font-size:12px;font-weight:600}
+  .top-bar a{color:#FCD34D;text-decoration:none}
+  .container{max-width:700px;margin:0 auto;padding:32px 20px 80px}
+  .invoice-card{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:40px;margin-bottom:20px;border:1px solid #E5E7EB}
+  .inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+  .inv-title{font-size:26px;font-weight:800;color:#0D9488}
+  .inv-num{font-size:12px;color:#9CA3AF;margin-top:2px}
+  .inv-dates{text-align:right;font-size:12px;color:#6B7280;line-height:1.8}
+  .inv-dates strong{color:#111827}
+  .inv-parties{display:flex;gap:40px;margin-bottom:28px}
+  .inv-party{flex:1}
+  .inv-party-label{font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .inv-party-name{font-size:14px;font-weight:700}
+  .inv-party-detail{font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px}
+  .inv-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+  .inv-table th{text-align:left;font-size:10px;font-weight:700;color:#0D9488;text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;background:#F0FDFA}
+  .inv-table th:last-child,.inv-table td:last-child{text-align:right}
+  .inv-table th:nth-child(2),.inv-table td:nth-child(2){text-align:center}
+  .inv-table th:nth-child(3),.inv-table td:nth-child(3){text-align:right}
+  .inv-table td{padding:10px 12px;font-size:12px;color:#374151;border-bottom:1px solid #F3F4F6}
+  .inv-table td:last-child{font-weight:600;color:#111827}
+  .inv-totals{display:flex;justify-content:flex-end;margin-bottom:20px}
+  .inv-totals-box{width:240px}
+  .inv-total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;color:#6B7280}
+  .inv-total-row span:last-child{color:#111827;font-weight:500}
+  .inv-grand-row{display:flex;justify-content:space-between;padding:10px 0;font-size:20px;font-weight:800;color:#0D9488;border-top:2px solid #0D9488;margin-top:4px}
+  .inv-notes{padding:12px 14px;background:#F9FAFB;border-radius:8px;font-size:11px;color:#6B7280;line-height:1.6;border:1px solid #F3F4F6;margin-bottom:10px}
+  .inv-notes strong{color:#374151;font-size:12px}
+
+  /* Status badge */
+  .status-badge{font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
+  .status-draft{background:#F3F4F6;color:#6B7280}
+  .status-sent{background:#DBEAFE;color:#1D4ED8}
+  .status-paid{background:#D1FAE5;color:#065F46}
+  .status-voided{background:#FEF3C7;color:#92400E}
+  .status-cancelled{background:#FEE2E2;color:#991B1B}
+
+  /* Pay section */
+  .pay-section{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:28px;border:1px solid #E5E7EB;text-align:center}
+  .pay-section h2{font-size:18px;font-weight:800;margin-bottom:6px}
+  .pay-section .pay-amount{font-size:32px;font-weight:900;color:#0D9488;margin-bottom:16px}
+  .pay-section p{font-size:13px;color:#6B7280;margin-bottom:20px}
+  .pay-buttons{display:flex;flex-direction:column;gap:12px;max-width:360px;margin:0 auto}
+  .btn-pay-stripe{padding:14px 24px;border:none;border-radius:10px;background:#635BFF;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn-pay-stripe:hover{background:#4B45C6}
+  #paypal-button-container{min-height:45px}
+  .paid-banner{background:#D1FAE5;border:2px solid #A7F3D0;border-radius:12px;padding:24px;text-align:center;margin-bottom:20px}
+  .paid-banner h2{color:#065F46;font-size:20px;margin-bottom:4px}
+  .paid-banner p{color:#047857;font-size:13px;margin:0}
+
+  .loading{text-align:center;padding:80px 24px;font-size:14px;color:#9CA3AF}
+  .error-state{text-align:center;padding:80px 24px}
+  .error-state h2{font-size:22px;margin-bottom:8px}
+  .error-state p{color:#6B7280;font-size:14px}
+
+  .footer-small{text-align:center;padding:20px;font-size:11px;color:#9CA3AF}
+  .footer-small a{color:#0D9488;text-decoration:none;font-weight:600}
+
+  @media(max-width:600px){
+    .container{padding:16px 12px 60px}
+    .invoice-card{padding:20px}
+    .inv-header{flex-direction:column;gap:8px}
+    .inv-dates{text-align:left}
+    .inv-parties{flex-direction:column;gap:16px}
+    .inv-title{font-size:22px}
+    .inv-grand-row{font-size:18px}
+    .pay-section{padding:20px}
+    .pay-section .pay-amount{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="top-bar">Powered by <a href="https://send-bills.com">Send-Bills.com</a> — Effortless Invoicing for Everyone</div>
+
+<div class="container">
+  <div class="loading" id="loadingState">Loading invoice...</div>
+  <div class="error-state" id="errorState" style="display:none">
+    <h2>Invoice not found</h2>
+    <p>This invoice may have been deleted or the link is invalid.</p>
+  </div>
+
+  <div id="invoiceContent" style="display:none">
+    <!-- Paid banner -->
+    <div class="paid-banner" id="paidBanner" style="display:none">
+      <h2>Payment Received</h2>
+      <p>This invoice has been paid. Thank you!</p>
+    </div>
+
+    <!-- Invoice card -->
+    <div class="invoice-card">
+      <div class="inv-header">
+        <div>
+          <div class="inv-title" id="invTitle">INVOICE</div>
+          <div class="inv-num" id="invNum"></div>
+        </div>
+        <div>
+          <span class="status-badge" id="invStatusBadge"></span>
+          <div class="inv-dates" id="invDates"></div>
+        </div>
+      </div>
+      <div class="inv-parties">
+        <div class="inv-party"><div class="inv-party-label">From</div><div class="inv-party-name" id="invFromName"></div><div class="inv-party-detail" id="invFromDetail"></div></div>
+        <div class="inv-party"><div class="inv-party-label">Bill To</div><div class="inv-party-name" id="invToName"></div><div class="inv-party-detail" id="invToDetail"></div></div>
+      </div>
+      <table class="inv-table"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody id="invItems"></tbody></table>
+      <div class="inv-totals"><div class="inv-totals-box" id="invTotals"></div></div>
+      <div id="invNotes"></div>
+    </div>
+
+    <!-- Pay section (only shows if payment gateways connected AND invoice not paid) -->
+    <div class="pay-section" id="paySection" style="display:none">
+      <h2>Pay This Invoice</h2>
+      <div class="pay-amount" id="payAmount"></div>
+      <p>Choose your preferred payment method below</p>
+      <div class="pay-buttons">
+        <button class="btn-pay-stripe" id="btnPayStripe" style="display:none" onclick="payWithStripe()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#fff" fill-opacity=".15"/><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.918 3.757 7.073c0 4.104 2.476 5.854 6.427 7.339 2.508.932 3.321 1.591 3.321 2.573 0 .951-.783 1.514-2.226 1.514-2.033 0-4.916-.956-7.048-2.233L3.34 21.782C5.4 22.957 8.546 24 11.591 24c2.646 0 4.841-.652 6.357-1.832 1.654-1.263 2.527-3.103 2.527-5.47 0-4.21-2.524-5.892-6.499-7.548z" fill="#fff"/></svg>
+          Pay with Card (Stripe)
+        </button>
+        <div id="paypal-button-container"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-small">
+  Powered by <a href="https://send-bills.com">Send-Bills.com</a> — Effortless Invoicing for Everyone
+</div>
+
+<script>
+function esc(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+const params = new URLSearchParams(location.search);
+const uid = params.get('uid');
+const invoiceId = params.get('id');
+
+let invoiceData = null;
+let paymentSettings = null;
+
+async function init(){
+  if(!uid || !invoiceId || !firebaseReady){
+    document.getElementById('loadingState').style.display='none';
+    document.getElementById('errorState').style.display='block';
+    return;
+  }
+
+  try {
+    invoiceData = await getPublicInvoice(uid, invoiceId);
+    paymentSettings = await getPublicPaymentSettings(uid);
+  } catch(e){}
+
+  document.getElementById('loadingState').style.display='none';
+
+  if(!invoiceData){
+    document.getElementById('errorState').style.display='block';
+    return;
+  }
+
+  document.getElementById('invoiceContent').style.display='block';
+  renderInvoice();
+}
+
+function renderInvoice(){
+  const d = invoiceData;
+  const cur = d.currency||'$';
+  const status = d.status||'Draft';
+
+  document.title = (d.docType||'Invoice')+' '+d.num+' — Send-Bills.com';
+
+  document.getElementById('invTitle').textContent = (d.docType||'Invoice').toUpperCase();
+  document.getElementById('invNum').textContent = d.num||'';
+  const badge = document.getElementById('invStatusBadge');
+  badge.className = 'status-badge status-'+(status).toLowerCase();
+  badge.textContent = status;
+  document.getElementById('invDates').innerHTML = '<strong>Date:</strong> '+(d.date||'—')+'<br><strong>Due:</strong> '+(d.due||'—');
+
+  document.getElementById('invFromName').textContent = d.fromName||'—';
+  document.getElementById('invFromDetail').innerHTML = esc(d.fromEmail||'')+(d.fromAddr?'<br>'+esc(d.fromAddr).replace(/\n/g,'<br>'):'');
+  document.getElementById('invToName').textContent = d.toName||'—';
+  document.getElementById('invToDetail').innerHTML = esc(d.toEmail||'')+(d.toAddr?'<br>'+esc(d.toAddr).replace(/\n/g,'<br>'):'');
+
+  const hasDisc = (d.items||[]).some(i => i.discAmt > 0);
+  const totalDisc = (d.items||[]).reduce((s,i) => s + (i.discAmt||0), 0);
+  document.getElementById('invItems').innerHTML = (d.items||[]).map(i=>`<tr><td><strong>${esc(i.name)}</strong>${i.desc?'<br><span style="color:#9CA3AF;font-size:11px">'+esc(i.desc)+'</span>':''}${i.discAmt>0?'<br><span style="color:#EF4444;font-size:11px">Disc: -'+(i.discType==='percent'?i.discVal+'%':cur+(i.discAmt||0).toFixed(2))+'</span>':''}</td><td>${i.qty||0}</td><td>${cur}${(i.price||0).toFixed(2)}</td><td>${cur}${(i.total||0).toFixed(2)}</td></tr>`).join('');
+
+  document.getElementById('invTotals').innerHTML = `
+    <div class="inv-total-row"><span>Subtotal</span><span>${cur}${(d.sub||0).toFixed(2)}</span></div>
+    ${totalDisc>0?`<div class="inv-total-row" style="color:#EF4444"><span>Total Discount</span><span>-${cur}${totalDisc.toFixed(2)}</span></div>`:''}
+    <div class="inv-total-row"><span>Tax (${d.taxRate||0}%)</span><span>${cur}${(d.taxAmt||0).toFixed(2)}</span></div>
+    <div class="inv-grand-row"><span>Total</span><span>${cur}${(d.grand||0).toFixed(2)}</span></div>`;
+
+  let notes='';
+  if(d.notes) notes+='<div class="inv-notes"><strong>Notes</strong><br>'+esc(d.notes).replace(/\n/g,'<br>')+'</div>';
+  if(d.terms) notes+='<div class="inv-notes" style="margin-top:8px"><strong>Terms & Conditions</strong><br>'+esc(d.terms).replace(/\n/g,'<br>')+'</div>';
+  document.getElementById('invNotes').innerHTML = notes;
+
+  // Show paid banner or pay section
+  if(status==='Paid'){
+    document.getElementById('paidBanner').style.display='block';
+    document.getElementById('paySection').style.display='none';
+  } else if(status!=='Voided' && status!=='Cancelled'){
+    // Show pay section if gateways connected
+    const hasStripe = paymentSettings?.stripePublishKey;
+    const hasPaypal = paymentSettings?.paypalClientId;
+    if(hasStripe || hasPaypal){
+      document.getElementById('paySection').style.display='block';
+      document.getElementById('payAmount').textContent = cur+(d.grand||0).toFixed(2);
+      if(hasStripe) document.getElementById('btnPayStripe').style.display='flex';
+      if(hasPaypal) loadPayPalButton();
+    }
+  }
+}
+
+// ===== STRIPE PAY =====
+function payWithStripe(){
+  // In production, this calls a Cloud Function to create a Stripe Checkout Session
+  // For now, redirect to Stripe payment link
+  alert('Stripe Checkout will open. This requires the Cloud Function (createStripeCheckout) to be deployed. See cloud-functions/index.js for setup.');
+}
+
+// ===== PAYPAL PAY =====
+function loadPayPalButton(){
+  const clientId = paymentSettings?.paypalClientId;
+  if(!clientId) return;
+  const script = document.createElement('script');
+  script.src = 'https://www.paypal.com/sdk/js?client-id='+encodeURIComponent(clientId)+'&currency='+(invoiceData.currency==='$'?'USD':invoiceData.currency==='€'?'EUR':invoiceData.currency==='£'?'GBP':'USD');
+  script.onload = function(){
+    paypal.Buttons({
+      createOrder: function(data, actions){
+        return actions.order.create({
+          purchase_units:[{
+            description: (invoiceData.docType||'Invoice')+' '+(invoiceData.num||''),
+            amount:{ value: (invoiceData.grand||0).toFixed(2) }
+          }]
+        });
+      },
+      onApprove: async function(data, actions){
+        await actions.order.capture();
+        // Update invoice status to Paid
+        try {
+          await db.collection('users').doc(uid).collection('invoices').doc(invoiceId).update({
+            status:'Paid',
+            paidAt: firebase.firestore.FieldValue.serverTimestamp(),
+            paidVia:'PayPal',
+            paypalOrderId: data.orderID
+          });
+        } catch(e){}
+        document.getElementById('paySection').style.display='none';
+        document.getElementById('paidBanner').style.display='block';
+        const badge=document.getElementById('invStatusBadge');
+        badge.className='status-badge status-paid';badge.textContent='Paid';
+      },
+      onError: function(err){ alert('Payment failed. Please try again.') }
+    }).render('#paypal-button-container');
+  };
+  document.head.appendChild(script);
+}
+
+init();
+</script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

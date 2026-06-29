@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice History — Send-Bills.com | Free Invoice Generator</title>
+<meta name="description" content="View and manage your saved invoices on Send-Bills.com. Access your invoice history, re-download PDFs, and keep track of all your billing documents.">
+<meta name="keywords" content="invoice history, saved invoices, free invoice generator, invoice tracker, billing history">
+<meta name="robots" content="index, follow">
+<meta name="robots" content="noai, noimageai">
+<meta name="AdsBot-Google" content="noindex">
+<meta http-equiv="X-Robots-Tag" content="noai, noimageai, nocache">
+<link rel="canonical" href="https://send-bills.com/invoice-history.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D9488'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='900' fill='white'%3E%24%3C/text%3E%3Cpath d='M18 5l-4 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M14 17l-2 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827;line-height:1.7}
+  .navbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{font-size:20px;font-weight:800;color:#0D9488;display:flex;align-items:center;gap:8px;text-decoration:none}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-right{display:flex;align-items:center;gap:10px}
+  .nav-back{font-size:13px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 14px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-back:hover{background:#CCFBF1}
+  .nav-login-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #CCFBF1;background:#F0FDFA;color:#0D9488;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .nav-login-btn:hover{background:#CCFBF1}
+  .nav-user-menu{display:none;align-items:center;gap:10px}
+  .nav-user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid #CCFBF1;object-fit:cover}
+  .nav-user-name{font-size:12px;font-weight:600;color:#111827;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-signout-btn{font-size:11px;color:#9CA3AF;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 8px;border-radius:6px;transition:all .15s}
+  .nav-signout-btn:hover{background:#FEF2F2;color:#EF4444}
+  .content{max-width:960px;margin:0 auto;padding:36px 24px 80px}
+  h1{font-size:28px;font-weight:800;color:#111827;margin-bottom:4px}
+  .subtitle{font-size:14px;color:#6B7280;margin-bottom:20px}
+  .top-actions{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+  .btn-top{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid #E5E7EB;background:#fff;color:#374151;transition:all .15s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+  .btn-top:hover{background:#F9FAFB;border-color:#D1D5DB}
+  .btn-top.primary{background:#0D9488;color:#fff;border-color:#0D9488}
+  .btn-top.primary:hover{background:#0F766E}
+  .stats-row{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .stat-card{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:16px 20px;flex:1;min-width:120px}
+  .stat-card .label{font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px}
+  .stat-card .value{font-size:22px;font-weight:800;color:#0D9488;margin-top:2px}
+  .login-prompt{text-align:center;padding:60px 24px;background:#fff;border-radius:16px;border:1px solid #E5E7EB;margin-top:24px}
+  .login-prompt .icon{font-size:48px;margin-bottom:16px}
+  .login-prompt h2{font-size:22px;font-weight:800;margin-bottom:8px}
+  .login-prompt p{font-size:14px;color:#6B7280;margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto}
+  .google-login-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;border-radius:10px;border:1px solid #D1D5DB;background:#fff;color:#111827;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .google-login-btn:hover{background:#F9FAFB;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .invoice-table{width:100%;background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden}
+  .invoice-table table{width:100%;border-collapse:collapse}
+  .invoice-table th{text-align:left;font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;padding:14px 12px;background:#F9FAFB;border-bottom:1px solid #E5E7EB}
+  .invoice-table td{padding:12px;font-size:13px;color:#374151;border-bottom:1px solid #F3F4F6;vertical-align:middle}
+  .invoice-table tr:last-child td{border-bottom:none}
+  .invoice-table tr:hover td{background:#F9FAFB}
+  .inv-num{font-weight:700;color:#111827}
+  .inv-type-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:#F0FDFA;color:#0D9488;text-transform:uppercase;letter-spacing:.3px}
+  .inv-amount{font-weight:700;color:#0D9488}
+
+  /* Status badges */
+  .status-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+  .status-draft{background:#F3F4F6;color:#6B7280}
+  .status-sent{background:#DBEAFE;color:#1D4ED8}
+  .status-paid{background:#D1FAE5;color:#065F46}
+  .status-voided{background:#FEF3C7;color:#92400E}
+  .status-cancelled{background:#FEE2E2;color:#991B1B}
+
+  .inv-actions{display:flex;gap:4px;flex-wrap:wrap}
+  .btn-action{padding:5px 10px;border-radius:6px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+  .btn-view{background:#F0FDFA;color:#0D9488}
+  .btn-view:hover{background:#CCFBF1}
+  .btn-send{background:#DBEAFE;color:#1D4ED8}
+  .btn-send:hover{background:#BFDBFE}
+  .btn-status{background:#F3F4F6;color:#374151}
+  .btn-status:hover{background:#E5E7EB}
+  .btn-link{background:#FEF3C7;color:#92400E}
+  .btn-link:hover{background:#FDE68A}
+  .btn-delete{background:#FEF2F2;color:#EF4444}
+  .btn-delete:hover{background:#FEE2E2}
+  .empty-state{text-align:center;padding:48px 24px;color:#9CA3AF}
+  .empty-state .icon{font-size:40px;margin-bottom:12px}
+  .empty-state p{font-size:14px}
+  .empty-state a{color:#0D9488;font-weight:600;text-decoration:none}
+  .loading{text-align:center;padding:40px;color:#9CA3AF;font-size:14px}
+
+  /* Modals */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;justify-content:center;align-items:flex-start;padding:40px 16px;overflow-y:auto}
+  .modal-overlay.show{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:560px;width:100%;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15);max-height:90vh;overflow-y:auto}
+  .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;color:#9CA3AF;cursor:pointer}
+  .modal-close:hover{color:#111827}
+  .modal h3{font-size:18px;font-weight:800;margin-bottom:16px}
+  .modal label{font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px}
+  .modal input,.modal textarea,.modal select{width:100%;padding:10px 12px;border:1px solid #D1D5DB;border-radius:8px;font-family:inherit;font-size:14px;margin-bottom:14px;outline:none;transition:border-color .15s}
+  .modal input:focus,.modal textarea:focus,.modal select:focus{border-color:#0D9488}
+  .modal textarea{min-height:80px;resize:vertical}
+  .modal-actions{display:flex;gap:8px;margin-top:8px}
+  .btn-modal{padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .15s}
+  .btn-modal-primary{background:#0D9488;color:#fff}
+  .btn-modal-primary:hover{background:#0F766E}
+  .btn-modal-danger{background:#EF4444;color:#fff}
+  .btn-modal-danger:hover{background:#DC2626}
+  .btn-modal-cancel{background:#F3F4F6;color:#374151}
+  .btn-modal-cancel:hover{background:#E5E7EB}
+
+  /* Status options grid */
+  .status-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .status-option{padding:12px;border:2px solid #E5E7EB;border-radius:10px;cursor:pointer;text-align:center;transition:all .15s}
+  .status-option:hover{border-color:#0D9488;background:#F0FDFA}
+  .status-option.selected{border-color:#0D9488;background:#F0FDFA}
+  .status-option .so-label{font-size:14px;font-weight:700;margin-bottom:2px}
+  .status-option .so-desc{font-size:11px;color:#6B7280}
+
+  /* View modal details */
+  .view-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+  .view-detail .lbl{font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+  .view-detail .val{font-size:13px;color:#374151}
+  .view-items{width:100%;border-collapse:collapse;margin:12px 0}
+  .view-items th{text-align:left;font-size:10px;font-weight:700;color:#0D9488;text-transform:uppercase;padding:8px;background:#F0FDFA}
+  .view-items td{padding:8px;font-size:12px;border-bottom:1px solid #F3F4F6}
+  .view-items th:last-child,.view-items td:last-child{text-align:right}
+  .view-totals{text-align:right;margin-top:12px}
+  .view-totals div{font-size:13px;color:#6B7280;margin-bottom:4px}
+  .view-totals .grand{font-size:18px;font-weight:800;color:#0D9488;border-top:2px solid #0D9488;padding-top:8px;margin-top:6px}
+
+  /* Share link box */
+  .share-link-box{display:flex;gap:6px;align-items:center;margin-top:10px}
+  .share-link-input{flex:1;padding:8px 10px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px;font-family:monospace;background:#F9FAFB;color:#374151}
+  .btn-copy{padding:8px 14px;border:none;border-radius:6px;background:#0D9488;color:#fff;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .btn-copy:hover{background:#0F766E}
+
+  /* Toast */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0D9488;color:white;padding:12px 24px;border-radius:10px;font-weight:600;font-size:13px;z-index:9999;transition:transform .3s ease;box-shadow:0 4px 16px rgba(13,148,136,.35)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  .footer{text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;font-size:12px;color:#9CA3AF;background:#fff}
+  .footer a{color:#0D9488;text-decoration:none}
+  .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+
+  @media(max-width:700px){
+    .invoice-table{overflow-x:auto}
+    .stats-row{flex-direction:column}
+    .nav-user-name{display:none}
+    .navbar{padding:0 12px;height:50px;gap:8px}
+    .nav-logo{font-size:16px;gap:6px}
+    .nav-logo svg{width:22px;height:22px}
+    .nav-right{gap:6px;flex-wrap:nowrap}
+    .nav-back{font-size:11px;padding:5px 8px;white-space:nowrap}
+    .nav-login-btn{padding:5px 8px;font-size:11px}
+    .nav-login-btn svg{width:14px;height:14px}
+    .nav-signout-btn{font-size:10px;padding:3px 6px}
+    .nav-user-avatar{width:26px;height:26px}
+    .content{padding:24px 14px 48px}
+    h1{font-size:22px}
+    .subtitle{font-size:13px}
+    .stat-card{padding:12px 16px}
+    .stat-card .value{font-size:18px}
+    .stat-card .label{font-size:10px}
+    .invoice-table th,.invoice-table td{padding:10px 8px;font-size:12px}
+    .inv-actions{flex-direction:column;gap:4px}
+    .btn-action{font-size:10px;padding:5px 8px}
+    .login-prompt{padding:36px 18px}
+    .login-prompt h2{font-size:18px}
+    .login-prompt p{font-size:13px}
+    .google-login-btn{font-size:13px;padding:10px 20px}
+    .modal{padding:16px;max-height:90vh}
+    .modal h3{font-size:16px}
+    .view-items th,.view-items td{padding:6px;font-size:11px}
+    .view-row{grid-template-columns:1fr}
+    .status-options{grid-template-columns:1fr}
+    .footer-links{gap:12px}
+    .footer-links a{font-size:12px}
+    .top-actions{gap:6px}
+    .btn-top{font-size:11px;padding:6px 12px}
+    #rptCards{grid-template-columns:1fr 1fr}
+  }
+  /* ===== SITE PROTECTION ===== */
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+  @media print{body{display:none!important}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="7" fill="#0D9488"/><text x="16" y="23" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="white">$</text><path d="M18 5l-4 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/><path d="M14 17l-2 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/></svg>
+    Send-Bills.com
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-back">Create Invoice</a>
+    <a href="payment-settings.html" class="nav-back" style="background:#DBEAFE;border-color:#BFDBFE;color:#1D4ED8">Payments</a>
+    <button class="nav-login-btn" id="navLoginBtn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Sign in
+    </button>
+    <div class="nav-user-menu" id="navUserMenu">
+      <img class="nav-user-avatar" id="navUserAvatar" src="" alt="">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-signout-btn" onclick="signOutUser()">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <h1>Invoice History</h1>
+  <p class="subtitle">Manage invoices, update statuses, send to clients, and accept payments.</p>
+
+  <!-- Login prompt -->
+  <div id="loginPromptSection" class="login-prompt" style="display:none">
+    <div class="icon">&#128274;</div>
+    <h2>Sign in to view your invoices</h2>
+    <p>Log in with your Google account to access your saved invoice history.</p>
+    <button class="google-login-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+  </div>
+
+  <!-- History section -->
+  <div id="historySection" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card"><div class="label">Total</div><div class="value" id="statCount">0</div></div>
+      <div class="stat-card"><div class="label">Paid</div><div class="value" id="statPaid">0</div></div>
+      <div class="stat-card"><div class="label">Pending</div><div class="value" id="statPending">0</div></div>
+      <div class="stat-card"><div class="label">Total Revenue</div><div class="value" id="statAmount">$0</div></div>
+    </div>
+
+    <div class="loading" id="loadingState">Loading your invoices...</div>
+
+    <div class="invoice-table" id="invoiceTable" style="display:none">
+      <table>
+        <thead><tr><th>Number</th><th>Type</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="invoiceTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="icon">&#128196;</div>
+      <p>No invoices yet. <a href="index.html">Create your first invoice</a> and it will appear here.</p>
+    </div>
+
+<!-- REPORTS SECTION -->
+<div style="margin-top:36px" id="reportsSection">
+  <h2 style="font-size:20px;font-weight:800;color:#111827;margin-bottom:16px">Reports &amp; Analytics</h2>
+
+  <!-- Filters -->
+  <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:20px;margin-bottom:20px">
+    <div style="font-size:13px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Filters</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div style="flex:1;min-width:140px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">Sales Person</label>
+        <select id="rptSalesPerson" onchange="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+          <option value="">All</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:120px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">Status</label>
+        <select id="rptStatus" onchange="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+          <option value="">All</option>
+          <option value="Draft">Draft</option>
+          <option value="Sent">Sent</option>
+          <option value="Paid">Paid</option>
+          <option value="Voided">Voided</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:120px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">Month</label>
+        <select id="rptMonth" onchange="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+          <option value="">All Months</option>
+          <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+          <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+          <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+          <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:120px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">Min Amount</label>
+        <input type="number" id="rptMinAmt" placeholder="0" min="0" step="1" oninput="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+      </div>
+      <div style="flex:1;min-width:120px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">Max Amount</label>
+        <input type="number" id="rptMaxAmt" placeholder="Any" min="0" step="1" oninput="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:10px">
+      <div style="flex:1;min-width:130px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">From Date</label>
+        <input type="date" id="rptFromDate" onchange="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+      </div>
+      <div style="flex:1;min-width:130px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">To Date</label>
+        <input type="date" id="rptToDate" onchange="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+      </div>
+      <div style="flex:1;min-width:130px">
+        <label style="font-size:11px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px">Client</label>
+        <input type="text" id="rptClient" placeholder="Search client..." oninput="runReport()" style="width:100%;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px;font-family:inherit">
+      </div>
+      <button onclick="clearFilters()" style="padding:8px 16px;border:1px solid #D1D5DB;border-radius:6px;background:#fff;color:#374151;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Report Summary Cards -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px" id="rptCards">
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase">Matching</div>
+      <div style="font-size:20px;font-weight:800;color:#0D9488" id="rptCount">0</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase">Total Amount</div>
+      <div style="font-size:20px;font-weight:800;color:#111827" id="rptTotal">$0</div>
+    </div>
+    <div style="background:#D1FAE5;border:1px solid #A7F3D0;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase">Paid</div>
+      <div style="font-size:20px;font-weight:800;color:#065F46" id="rptPaid">$0</div>
+    </div>
+    <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase">Outstanding</div>
+      <div style="font-size:20px;font-weight:800;color:#92400E" id="rptOutstanding">$0</div>
+    </div>
+  </div>
+
+  <!-- Report Results Table -->
+  <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;overflow-x:auto" id="rptTableWrap">
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;padding:12px 10px;background:#F9FAFB;border-bottom:1px solid #E5E7EB">#</th>
+        <th style="text-align:left;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;padding:12px 10px;background:#F9FAFB;border-bottom:1px solid #E5E7EB">Client</th>
+        <th style="text-align:left;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;padding:12px 10px;background:#F9FAFB;border-bottom:1px solid #E5E7EB">Sales Person</th>
+        <th style="text-align:left;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;padding:12px 10px;background:#F9FAFB;border-bottom:1px solid #E5E7EB">Date</th>
+        <th style="text-align:right;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;padding:12px 10px;background:#F9FAFB;border-bottom:1px solid #E5E7EB">Amount</th>
+        <th style="text-align:center;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;padding:12px 10px;background:#F9FAFB;border-bottom:1px solid #E5E7EB">Status</th>
+      </tr></thead>
+      <tbody id="rptTableBody"></tbody>
+    </table>
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- VIEW INVOICE MODAL -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('viewModal')">&times;</button>
+    <h3 id="viewTitle">Invoice</h3>
+    <div style="margin-bottom:12px"><span class="status-badge" id="viewStatusBadge"></span></div>
+    <div class="view-row">
+      <div class="view-detail"><div class="lbl">From</div><div class="val" id="viewFrom"></div></div>
+      <div class="view-detail"><div class="lbl">Bill To</div><div class="val" id="viewTo"></div></div>
+    </div>
+    <div class="view-row">
+      <div class="view-detail"><div class="lbl">Date</div><div class="val" id="viewDate"></div></div>
+      <div class="view-detail"><div class="lbl">Due</div><div class="val" id="viewDue"></div></div>
+    </div>
+    <table class="view-items"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead><tbody id="viewItemsBody"></tbody></table>
+    <div class="view-totals" id="viewTotals"></div>
+    <div id="viewNotes" style="margin-top:12px"></div>
+    <div style="font-size:11px;color:#9CA3AF;margin-top:12px" id="viewShareLabel">Shareable link for client:</div>
+    <div class="share-link-box">
+      <input class="share-link-input" id="viewShareLink" readonly>
+      <button class="btn-copy" onclick="copyShareLink()">Copy</button>
+    </div>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn-modal btn-modal-primary" onclick="redownloadPDF()">Download PDF</button>
+      <button class="btn-modal btn-modal-cancel" onclick="closeModal('viewModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE STATUS MODAL -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+    <h3>Update Invoice Status</h3>
+    <p style="font-size:13px;color:#6B7280;margin-bottom:16px" id="statusInvLabel"></p>
+    <div class="status-options" id="statusOptions">
+      <div class="status-option" data-status="Draft" onclick="selectStatus(this)">
+        <div class="so-label">Draft</div><div class="so-desc">Not yet sent</div>
+      </div>
+      <div class="status-option" data-status="Sent" onclick="selectStatus(this)">
+        <div class="so-label">Sent</div><div class="so-desc">Sent to client</div>
+      </div>
+      <div class="status-option" data-status="Paid" onclick="selectStatus(this)">
+        <div class="so-label" style="color:#065F46">Paid</div><div class="so-desc">Payment received</div>
+      </div>
+      <div class="status-option" data-status="Voided" onclick="selectStatus(this)">
+        <div class="so-label" style="color:#92400E">Voided</div><div class="so-desc">Invalid / corrected</div>
+      </div>
+      <div class="status-option" data-status="Cancelled" onclick="selectStatus(this)">
+        <div class="so-label" style="color:#991B1B">Cancelled</div><div class="so-desc">No longer needed</div>
+      </div>
+    </div>
+    <div id="voidReasonWrap" style="display:none">
+      <label>Reason (required for Void)</label>
+      <textarea id="voidReason" placeholder="e.g. Duplicate invoice, incorrect amount, replaced by new invoice..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal btn-modal-primary" onclick="confirmStatusUpdate()">Update Status</button>
+      <button class="btn-modal btn-modal-cancel" onclick="closeModal('statusModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SEND INVOICE MODAL -->
+<div class="modal-overlay" id="sendModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('sendModal')">&times;</button>
+    <h3>Send Invoice to Client</h3>
+    <p style="font-size:13px;color:#6B7280;margin-bottom:16px" id="sendInvLabel"></p>
+    <label>Client Email Address</label>
+    <input type="email" id="sendEmail" placeholder="client@example.com">
+    <p style="font-size:11px;color:#9CA3AF;margin-top:-8px;margin-bottom:14px">The client will receive the invoice PDF and a link to view/pay online.</p>
+    <div class="modal-actions">
+      <button class="btn-modal btn-modal-primary" id="btnSendConfirm" onclick="confirmSendInvoice()">Send Invoice</button>
+      <button class="btn-modal btn-modal-cancel" onclick="closeModal('sendModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="index.html">Invoice Generator</a>
+    <a href="invoice-history.html">Invoice History</a>
+    <a href="payment-settings.html">Payment Settings</a>
+    <a href="about.html">About Us</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="cookies-policy.html">Cookie Policy</a>
+      <a href="gdpr.html">GDPR</a>
+      <a href="ccpa.html">CCPA</a>
+      <a href="contact.html">Contact Us</a>
+  </div>
+  <p>&copy; 2026 Send-Bills.com — Free Invoice Generator. All rights reserved.</p>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+let allInvoices = [];
+let currentViewInvoice = null;
+let statusInvoiceIdx = null;
+let selectedStatus = null;
+let sendInvoiceIdx = null;
+
+function esc(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function getStatusClass(s){return 'status-badge status-'+(s||'draft').toLowerCase()}
+
+if (auth) {
+  auth.onAuthStateChanged(async user => {
+    currentUser = user;
+    updateAuthUI();
+    if(user){
+      document.getElementById('loginPromptSection').style.display='none';
+      document.getElementById('historySection').style.display='block';
+      await loadInvoices();
+    } else {
+      document.getElementById('loginPromptSection').style.display='block';
+      document.getElementById('historySection').style.display='none';
+    }
+  });
+} else {
+  document.getElementById('loginPromptSection').style.display='block';
+  document.getElementById('historySection').style.display='none';
+}
+
+async function loadInvoices(){
+  document.getElementById('loadingState').style.display='block';
+  document.getElementById('invoiceTable').style.display='none';
+  document.getElementById('emptyState').style.display='none';
+  allInvoices = await getInvoiceHistory();
+  document.getElementById('loadingState').style.display='none';
+  if(allInvoices.length===0){document.getElementById('emptyState').style.display='block';return}
+  document.getElementById('invoiceTable').style.display='block';
+
+  // Stats
+  document.getElementById('statCount').textContent = allInvoices.length;
+  const paid = allInvoices.filter(i=>i.status==='Paid');
+  document.getElementById('statPaid').textContent = paid.length;
+  document.getElementById('statPending').textContent = allInvoices.filter(i=>!i.status||i.status==='Draft'||i.status==='Sent').length;
+  const topCur = allInvoices[0]?.currency||'$';
+  document.getElementById('statAmount').textContent = topCur + paid.reduce((s,i)=>s+(i.grand||0),0).toFixed(2);
+
+  renderTable();
+}
+
+function renderTable(){
+  const tbody = document.getElementById('invoiceTableBody');
+  tbody.innerHTML = allInvoices.map((inv,idx) => {
+    const date = inv.date || '—';
+    const cur = inv.currency||'$';
+    const status = inv.status||'Draft';
+    return `<tr>
+      <td class="inv-num">${esc(inv.num||'—')}</td>
+      <td><span class="inv-type-badge">${esc(inv.docType||'Invoice')}</span></td>
+      <td>${esc(inv.toName||'—')}</td>
+      <td>${esc(date)}</td>
+      <td class="inv-amount">${cur}${(inv.grand||0).toFixed(2)}</td>
+      <td><span class="${getStatusClass(status)}">${status}</span></td>
+      <td class="inv-actions">
+        <button class="btn-action btn-view" onclick="viewInvoice(${idx})">View</button>
+        <button class="btn-action btn-status" onclick="openStatusModal(${idx})">Status</button>
+        <button class="btn-action btn-send" onclick="openSendModal(${idx})">Send</button>
+        <button class="btn-action btn-delete" onclick="deleteInvoice('${inv.id}',${idx})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+  populateSalesPersonFilter();
+  runReport();
+}
+
+// ===== VIEW INVOICE =====
+function viewInvoice(idx){
+  const inv = allInvoices[idx]; if(!inv) return;
+  currentViewInvoice = inv;
+  const cur = inv.currency||'$';
+  const status = inv.status||'Draft';
+
+  document.getElementById('viewTitle').textContent = (inv.docType||'Invoice').toUpperCase()+' '+esc(inv.num||'');
+  const badge = document.getElementById('viewStatusBadge');
+  badge.className = getStatusClass(status); badge.textContent = status;
+  document.getElementById('viewDate').textContent = inv.date||'—';
+  document.getElementById('viewDue').textContent = inv.due||'—';
+  document.getElementById('viewFrom').innerHTML = '<strong>'+esc(inv.fromName||'—')+'</strong><br>'+esc(inv.fromEmail||'')+(inv.fromAddr?'<br>'+esc(inv.fromAddr).replace(/\n/g,'<br>'):'');
+  document.getElementById('viewTo').innerHTML = '<strong>'+esc(inv.toName||'—')+'</strong><br>'+esc(inv.toEmail||'')+(inv.toAddr?'<br>'+esc(inv.toAddr).replace(/\n/g,'<br>'):'');
+
+  document.getElementById('viewItemsBody').innerHTML = (inv.items||[]).map(i=>`<tr><td><strong>${esc(i.name)}</strong>${i.desc?'<br><span style="color:#9CA3AF;font-size:11px">'+esc(i.desc)+'</span>':''}${i.discAmt>0?'<br><span style="color:#EF4444;font-size:11px">Disc: -'+(i.discType==='percent'?i.discVal+'%':cur+(i.discAmt||0).toFixed(2))+'</span>':''}</td><td>${i.qty||0}</td><td>${cur}${(i.price||0).toFixed(2)}</td><td>${cur}${(i.total||0).toFixed(2)}</td></tr>`).join('');
+
+  const invTotalDisc = (inv.items||[]).reduce((s,i) => s + (i.discAmt||0), 0);
+  document.getElementById('viewTotals').innerHTML = `<div>Subtotal: ${cur}${(inv.sub||0).toFixed(2)}</div>${invTotalDisc>0?`<div style="color:#EF4444">Discount: -${cur}${invTotalDisc.toFixed(2)}</div>`:''}<div>Tax (${inv.taxRate||0}%): ${cur}${(inv.taxAmt||0).toFixed(2)}</div><div class="grand">Total: ${cur}${(inv.grand||0).toFixed(2)}</div>`;
+
+  let notes='';
+  if(inv.notes) notes+='<div style="background:#F9FAFB;padding:10px;border-radius:8px;font-size:12px;color:#6B7280;margin-bottom:6px"><strong style="color:#374151">Notes</strong><br>'+esc(inv.notes).replace(/\n/g,'<br>')+'</div>';
+  if(inv.terms) notes+='<div style="background:#F9FAFB;padding:10px;border-radius:8px;font-size:12px;color:#6B7280"><strong style="color:#374151">Terms & Conditions</strong><br>'+esc(inv.terms).replace(/\n/g,'<br>')+'</div>';
+  document.getElementById('viewNotes').innerHTML = notes;
+
+  // Shareable link
+  const shareUrl = location.origin+'/invoice-view.html?uid='+currentUser.uid+'&id='+inv.id;
+  document.getElementById('viewShareLink').value = shareUrl;
+
+  openModal('viewModal');
+}
+
+function copyShareLink(){
+  const input = document.getElementById('viewShareLink');
+  input.select();
+  navigator.clipboard.writeText(input.value).then(()=>showToast('Link copied!')).catch(()=>{document.execCommand('copy');showToast('Link copied!')});
+}
+
+// ===== UPDATE STATUS =====
+function openStatusModal(idx){
+  statusInvoiceIdx = idx;
+  selectedStatus = null;
+  const inv = allInvoices[idx];
+  document.getElementById('statusInvLabel').textContent = (inv.docType||'Invoice')+' '+inv.num+' — '+inv.toName;
+  document.querySelectorAll('.status-option').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('voidReasonWrap').style.display='none';
+  document.getElementById('voidReason').value='';
+  openModal('statusModal');
+}
+
+function selectStatus(el){
+  document.querySelectorAll('.status-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStatus = el.dataset.status;
+  document.getElementById('voidReasonWrap').style.display = (selectedStatus==='Voided'||selectedStatus==='Cancelled')?'block':'none';
+}
+
+async function confirmStatusUpdate(){
+  if(!selectedStatus){showToast('Please select a status');return}
+  if((selectedStatus==='Voided')&&!document.getElementById('voidReason').value.trim()){showToast('Please enter a reason for voiding');return}
+  const inv = allInvoices[statusInvoiceIdx];
+  const reason = (selectedStatus==='Voided'||selectedStatus==='Cancelled')? document.getElementById('voidReason').value.trim():'';
+  const ok = await updateInvoiceStatus(inv.id, selectedStatus, reason);
+  if(ok){
+    closeModal('statusModal');
+    showToast('Status updated to '+selectedStatus);
+    await loadInvoices();
+  } else {
+    showToast('Failed to update status');
+  }
+}
+
+// ===== SEND INVOICE =====
+function openSendModal(idx){
+  sendInvoiceIdx = idx;
+  const inv = allInvoices[idx];
+  document.getElementById('sendInvLabel').textContent = (inv.docType||'Invoice')+' '+inv.num+' — '+(inv.currency||'$')+(inv.grand||0).toFixed(2);
+  document.getElementById('sendEmail').value = inv.toEmail||'';
+  openModal('sendModal');
+}
+
+async function confirmSendInvoice(){
+  const email = document.getElementById('sendEmail').value.trim();
+  if(!email||!email.includes('@')){showToast('Please enter a valid email');return}
+  const inv = allInvoices[sendInvoiceIdx];
+  document.getElementById('btnSendConfirm').textContent='Sending...';
+  document.getElementById('btnSendConfirm').disabled=true;
+  const result = await sendInvoiceEmail(inv.id, email);
+  document.getElementById('btnSendConfirm').textContent='Send Invoice';
+  document.getElementById('btnSendConfirm').disabled=false;
+  if(result.success){
+    closeModal('sendModal');
+    showToast('Invoice sent to '+email);
+    await loadInvoices();
+  } else {
+    showToast('Failed: '+(result.error||'Unknown error'));
+  }
+}
+
+// ===== DELETE =====
+async function deleteInvoice(id,idx){
+  if(!confirm('Delete this invoice permanently?'))return;
+  const ok=await deleteInvoiceFromFirestore(id);
+  if(ok){showToast('Invoice deleted');await loadInvoices()}
+}
+
+// ===== RE-DOWNLOAD PDF =====
+function redownloadPDF(){
+  const d=currentViewInvoice;if(!d)return;
+  const doc=new jsPDF('p','mm','a4');const w=doc.internal.pageSize.getWidth();const m=20;let y=20;const cur=d.currency||'$';
+  const txt=(t,x,yy,o={})=>{doc.setFontSize(o.s||10);doc.setFont('helvetica',o.st||'normal');doc.setTextColor(o.c||'#333333');doc.text(t,x,yy,o.a==='right'?{align:'right'}:undefined)};
+
+  txt((d.docType||'Invoice').toUpperCase(),m,y,{s:26,st:'bold',c:'#0D9488'});
+  txt(d.num||'',m,y+7,{s:10,c:'#9CA3AF'});
+  txt('Date: '+(d.date||''),w-m,y,{s:10,a:'right',c:'#6B7280'});
+  txt('Due: '+(d.due||''),w-m,y+5,{s:10,a:'right',c:'#6B7280'});
+  y+=20;doc.setDrawColor(229,231,235);doc.line(m,y,w-m,y);y+=8;
+  txt('FROM',m,y,{s:8,st:'bold',c:'#9CA3AF'});txt('BILL TO',w/2+8,y,{s:8,st:'bold',c:'#9CA3AF'});y+=5;
+  txt(d.fromName||'',m,y,{s:11,st:'bold',c:'#111827'});txt(d.toName||'',w/2+8,y,{s:11,st:'bold',c:'#111827'});y+=5;
+  if(d.fromEmail)txt(d.fromEmail,m,y,{s:9,c:'#6B7280'});if(d.toEmail)txt(d.toEmail,w/2+8,y,{s:9,c:'#6B7280'});y+=4;
+  const fl=(d.fromAddr||'').split('\n'),tl=(d.toAddr||'').split('\n');
+  for(let i=0;i<Math.max(fl.length,tl.length);i++){if(fl[i])txt(fl[i],m,y,{s:9,c:'#6B7280'});if(tl[i])txt(tl[i],w/2+8,y,{s:9,c:'#6B7280'});y+=4}
+  if(d.salesPerson&&d.salesPersonOnPdf){txt('Sales Person: '+d.salesPerson,m,y,{s:9,c:'#6B7280'});y+=6;}
+  y+=6;doc.setFillColor(240,253,250);doc.rect(m,y-3,w-m*2,9,'F');
+  txt('Item',m+3,y+2,{s:8,st:'bold',c:'#0D9488'});txt('Qty',m+95,y+2,{s:8,st:'bold',c:'#0D9488'});txt('Price',m+118,y+2,{s:8,st:'bold',c:'#0D9488'});txt('Total',w-m-3,y+2,{s:8,st:'bold',c:'#0D9488',a:'right'});y+=10;
+  (d.items||[]).forEach((it,i)=>{const rH=it.desc?14:8;if(y+rH>260){doc.addPage();y=20}if(i%2){doc.setFillColor(249,250,251);doc.rect(m,y-3,w-m*2,rH,'F')}txt(it.name||'',m+3,y+1,{s:9,st:'bold',c:'#111827'});txt(String(it.qty||0),m+95,y+1,{s:9,c:'#374151'});txt(cur+(it.price||0).toFixed(2),m+118,y+1,{s:9,c:'#374151'});txt(cur+(it.total||0).toFixed(2),w-m-3,y+1,{s:9,st:'bold',c:'#111827',a:'right'});if(it.desc){const dl=doc.splitTextToSize(it.desc,85);txt(dl[0],m+3,y+5.5,{s:7.5,c:'#9CA3AF'});if(dl[1])txt(dl[1],m+3,y+9,{s:7.5,c:'#9CA3AF'})}y+=rH});
+  y+=4;doc.setDrawColor(229,231,235);doc.line(m,y,w-m,y);y+=7;const tx=w-m-3,lx=w-m-55;
+  txt('Subtotal',lx,y,{s:10,c:'#6B7280'});txt(cur+(d.sub||0).toFixed(2),tx,y,{s:10,a:'right',c:'#111827'});y+=6;
+  const pdfTotalDisc=(d.items||[]).reduce((s,i)=>s+(i.discAmt||0),0);
+  if(pdfTotalDisc>0){txt('Discount',lx,y,{s:10,c:'#EF4444'});txt('-'+cur+pdfTotalDisc.toFixed(2),tx,y,{s:10,a:'right',c:'#EF4444'});y+=6;}
+  txt('Tax ('+(d.taxRate||0)+'%)',lx,y,{s:10,c:'#6B7280'});txt(cur+(d.taxAmt||0).toFixed(2),tx,y,{s:10,a:'right',c:'#111827'});y+=3;
+  doc.setDrawColor(13,148,136);doc.setLineWidth(.5);doc.line(lx-8,y,w-m,y);y+=7;
+  txt('TOTAL',lx,y,{s:13,st:'bold',c:'#0D9488'});txt(cur+(d.grand||0).toFixed(2),tx,y,{s:13,st:'bold',c:'#0D9488',a:'right'});y+=12;
+  if(d.notes){if(y>245){doc.addPage();y=20}doc.setFillColor(249,250,251);const nl=doc.splitTextToSize(d.notes,w-m*2-12);const nh=nl.length*4.5+14;doc.roundedRect(m,y,w-m*2,nh,2,2,'F');txt('Notes:',m+6,y+7,{s:9,st:'bold',c:'#374151'});doc.setFontSize(8.5);doc.setTextColor('#6B7280');doc.text(nl,m+6,y+12);y+=nh+4}
+  if(d.terms){if(y>245){doc.addPage();y=20}doc.setFillColor(249,250,251);const tl2=doc.splitTextToSize(d.terms,w-m*2-12);const th2=tl2.length*4.5+14;doc.roundedRect(m,y,w-m*2,th2,2,2,'F');txt('Terms & Conditions:',m+6,y+7,{s:9,st:'bold',c:'#374151'});doc.setFontSize(8.5);doc.setTextColor('#6B7280');doc.text(tl2,m+6,y+12)}
+  doc.save((d.docType||'Invoice')+'_'+(d.num||'INV')+'.pdf');
+}
+
+// ===== REPORTS =====
+function populateSalesPersonFilter() {
+  const sel = document.getElementById('rptSalesPerson');
+  if(!sel) return;
+  const sps = [...new Set(allInvoices.map(i=>i.salesPerson).filter(Boolean))];
+  sel.innerHTML = '<option value="">All</option>';
+  sps.forEach(sp => { sel.innerHTML += `<option value="${sp}">${sp}</option>`; });
+}
+
+function runReport() {
+  const sp = document.getElementById('rptSalesPerson')?.value||'';
+  const status = document.getElementById('rptStatus')?.value||'';
+  const month = document.getElementById('rptMonth')?.value||'';
+  const minAmt = parseFloat(document.getElementById('rptMinAmt')?.value)||0;
+  const maxAmt = parseFloat(document.getElementById('rptMaxAmt')?.value)||Infinity;
+  const fromDate = document.getElementById('rptFromDate')?.value||'';
+  const toDate = document.getElementById('rptToDate')?.value||'';
+  const client = (document.getElementById('rptClient')?.value||'').toLowerCase();
+
+  let filtered = allInvoices.filter(inv => {
+    if(sp && inv.salesPerson !== sp) return false;
+    if(status && (inv.status||'Draft') !== status) return false;
+    if(month && inv.date && !inv.date.startsWith(inv.date.slice(0,5)+'-'+month)) {
+      const invMonth = inv.date.split('-')[1];
+      if(invMonth !== month) return false;
+    }
+    if((inv.grand||0) < minAmt) return false;
+    if(maxAmt !== Infinity && (inv.grand||0) > maxAmt) return false;
+    if(fromDate && inv.date && inv.date < fromDate) return false;
+    if(toDate && inv.date && inv.date > toDate) return false;
+    if(client && !(inv.toName||'').toLowerCase().includes(client)) return false;
+    return true;
+  });
+
+  // Summary cards
+  const cur = filtered[0]?.currency||allInvoices[0]?.currency||'$';
+  document.getElementById('rptCount').textContent = filtered.length;
+  document.getElementById('rptTotal').textContent = cur + filtered.reduce((s,i)=>s+(i.grand||0),0).toFixed(2);
+  const paidInvs = filtered.filter(i=>i.status==='Paid');
+  document.getElementById('rptPaid').textContent = cur + paidInvs.reduce((s,i)=>s+(i.grand||0),0).toFixed(2);
+  const outInvs = filtered.filter(i=>!i.status||i.status==='Draft'||i.status==='Sent');
+  document.getElementById('rptOutstanding').textContent = cur + outInvs.reduce((s,i)=>s+(i.grand||0),0).toFixed(2);
+
+  // Table
+  const tbody = document.getElementById('rptTableBody');
+  if(!tbody) return;
+  tbody.innerHTML = filtered.map(inv => {
+    const st = inv.status||'Draft';
+    const stClass = 'status-'+st.toLowerCase();
+    return `<tr>
+      <td style="padding:10px;font-size:12px;font-weight:700;border-bottom:1px solid #F3F4F6">${esc(inv.num||'—')}</td>
+      <td style="padding:10px;font-size:12px;border-bottom:1px solid #F3F4F6">${esc(inv.toName||'—')}</td>
+      <td style="padding:10px;font-size:12px;border-bottom:1px solid #F3F4F6">${esc(inv.salesPerson||'—')}</td>
+      <td style="padding:10px;font-size:12px;border-bottom:1px solid #F3F4F6">${esc(inv.date||'—')}</td>
+      <td style="padding:10px;font-size:12px;text-align:right;font-weight:600;color:#0D9488;border-bottom:1px solid #F3F4F6">${inv.currency||'$'}${(inv.grand||0).toFixed(2)}</td>
+      <td style="padding:10px;text-align:center;border-bottom:1px solid #F3F4F6"><span class="${stClass}" style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">${st}</span></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" style="padding:24px;text-align:center;color:#9CA3AF;font-size:13px">No invoices match your filters</td></tr>';
+}
+
+function clearFilters() {
+  ['rptSalesPerson','rptStatus','rptMonth'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['rptMinAmt','rptMaxAmt','rptFromDate','rptToDate','rptClient'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  runReport();
+}
+</script>
+<script src="cookie-consent.js"></script>
+<script src="site-protection.js"></script>
+</body>
+</html>

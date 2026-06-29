@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — Send-Bills.com | Free Invoice Generator Online</title>
+<meta name="description" content="Learn about Send-Bills.com — the simplest free invoice generator online. Create professional invoices without sign up, login, or payment. Built for freelancers and small businesses.">
+<meta name="keywords" content="about free invoice generator, Send-Bills.com about, free invoicing tool, invoice maker online free, about us invoice generator">
+<meta name="robots" content="index, follow">
+<meta name="robots" content="noai, noimageai">
+<meta name="AdsBot-Google" content="noindex">
+<meta http-equiv="X-Robots-Tag" content="noai, noimageai, nocache">
+<link rel="canonical" href="https://send-bills.com/about.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D9488'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='900' fill='white'%3E%24%3C/text%3E%3Cpath d='M18 5l-4 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M14 17l-2 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827;line-height:1.7}
+  .navbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{font-size:20px;font-weight:800;color:#0D9488;display:flex;align-items:center;gap:8px;text-decoration:none}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-back{font-size:13px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 14px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-back:hover{background:#CCFBF1}
+  .content{max-width:740px;margin:0 auto;padding:48px 24px 80px}
+  h1{font-size:32px;font-weight:800;color:#111827;margin-bottom:8px}
+  .subtitle{font-size:16px;color:#6B7280;margin-bottom:32px}
+  h2{font-size:18px;font-weight:700;color:#0D9488;margin-top:32px;margin-bottom:12px}
+  p{font-size:15px;color:#374151;margin-bottom:16px}
+  .features{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+  .feature-card{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:20px}
+  .feature-card h3{font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .feature-card p{font-size:13px;color:#6B7280;margin:0}
+  .feature-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;background:#F0FDFA}
+  .cta-box{background:#F0FDFA;border:1px solid #CCFBF1;border-radius:12px;padding:24px;text-align:center;margin-top:32px}
+  .cta-box p{color:#0F766E;margin-bottom:12px}
+  .cta-btn{display:inline-block;background:#0D9488;color:#fff;padding:12px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:14px;transition:background .15s}
+  .cta-btn:hover{background:#0F766E}
+  .footer{text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;font-size:12px;color:#9CA3AF;background:#fff}
+  .footer a{color:#0D9488;text-decoration:none}
+  .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+  .nav-right{display:flex;align-items:center;gap:10px}
+  .nav-login-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #CCFBF1;background:#F0FDFA;color:#0D9488;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .nav-login-btn:hover{background:#CCFBF1}
+  .nav-user-menu{display:none;align-items:center;gap:10px}
+  .nav-user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid #CCFBF1;object-fit:cover}
+  .nav-user-name{font-size:12px;font-weight:600;color:#111827;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-history-link{display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 12px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-history-link:hover{background:#CCFBF1}
+  .nav-signout-btn{font-size:11px;color:#9CA3AF;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 8px;border-radius:6px;transition:all .15s}
+  .nav-signout-btn:hover{background:#FEF2F2;color:#EF4444}
+  @media(max-width:600px){
+    .features{grid-template-columns:1fr}
+    .navbar{padding:0 10px;height:48px;gap:6px}
+    .nav-logo{font-size:15px;gap:5px}
+    .nav-logo svg{width:20px;height:20px}
+    .nav-right{gap:4px;flex-wrap:nowrap}
+    .nav-back{font-size:10px;padding:4px 6px;white-space:nowrap}
+    .nav-login-btn{padding:4px 6px;font-size:10px}
+    .nav-login-btn svg{width:12px;height:12px}
+    .nav-user-name{display:none}
+    .nav-history-link{padding:4px 6px;font-size:10px}
+    .nav-signout-btn{font-size:9px;padding:2px 4px}
+    .nav-user-avatar{width:24px;height:24px}
+    .content{padding:20px 12px 48px}
+    h1{font-size:22px}
+    h2{font-size:16px}
+    p{font-size:13px}
+    .footer-links{gap:8px}
+    .footer-links a{font-size:11px}
+    .feature-card{padding:16px}
+    .feature-card h3{font-size:14px}
+    .feature-card p{font-size:12px}
+    .cta-box{padding:18px}
+    .cta-btn{font-size:13px;padding:10px 24px}
+  }
+  /* ===== SITE PROTECTION ===== */
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+  @media print{body{display:none!important}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="7" fill="#0D9488"/><text x="16" y="23" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="white">$</text><path d="M18 5l-4 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/><path d="M14 17l-2 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/></svg>
+    Send-Bills.com
+  </a>
+  <div class="nav-right">
+    <a href="invoice-history.html" class="nav-history-link" id="navHistoryLink">History</a>
+    <a href="index.html" class="nav-back">Back to Invoice Generator</a>
+    <button class="nav-login-btn" id="navLoginBtn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Sign in
+    </button>
+    <div class="nav-user-menu" id="navUserMenu">
+      <img class="nav-user-avatar" id="navUserAvatar" src="" alt="">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-signout-btn" onclick="signOutUser()">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <h1>About Send-Bills.com</h1>
+  <p class="subtitle">The simplest way to create professional invoices — completely free, no sign up required.</p>
+
+  <h2>Our Story</h2>
+  <p>Send-Bills.com was born from a real frustration. Our founder, <strong>Pushpender Sodlan</strong>, was running his own business when he needed to send a single invoice to a client. Something that simple shouldn't have been difficult — but it was. Every tool he found wanted him to create an account, enter a credit card, start a "14-day free trial," or pay $15-50/month for features he'd never use.</p>
+
+  <p>That experience hit hard. It wasn't just inconvenient — it was slowing his business down. He lost time, he lost momentum, and he realized millions of freelancers, contractors, and small business owners face the exact same pain every day. Invoicing was being gatekept behind paywalls and forced sign-ups when it should be as simple as writing an email.</p>
+
+  <p><strong>So Pushpender built the tool he wished existed.</strong> A platform where anyone can create a professional invoice in 60 seconds, send it to their client, accept payments, and manage their entire billing — without ever creating an account or paying a cent.</p>
+
+  <h2>Our Mission</h2>
+  <p>We believe invoicing is a basic business need, not a luxury. It should be as free and accessible as email. Send-Bills.com exists to remove every barrier between you and getting paid — no sign ups, no paywalls, no complexity. That's not a marketing line — it's the founding principle Pushpender built this entire platform on.</p>
+
+  <h2>How It Works</h2>
+  <p>Send-Bills.com is a client-side invoice generator. This means everything happens right in your web browser — your data never leaves your device. Simply choose your document type (Invoice, Bill, Receipt, Estimate, or Quotation), fill in your business details, add your client's information, list your items or services, add notes and terms &amp; conditions, and download a professionally formatted PDF. It is that simple.</p>
+
+  <h2>Why Choose Send-Bills.com?</h2>
+  <div class="features">
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#9889;</span> Instant & Fast</h3>
+      <p>No loading screens, no account setup. Open the page and start creating your invoice immediately.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#128274;</span> 100% Private</h3>
+      <p>Your invoice data is processed locally in your browser. We never see, store, or transmit your business information.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#128176;</span> Always Free</h3>
+      <p>No hidden fees, no premium tiers, no credit card required. Create unlimited invoices forever.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#127758;</span> Works Everywhere</h3>
+      <p>Supports 49+ currencies worldwide, works on desktop, tablet, and mobile. Use it anywhere in the world.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#128196;</span> Professional PDFs</h3>
+      <p>Generate clean, well-formatted PDF invoices with your company logo, itemized lists, taxes, notes, and terms &amp; conditions.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#128064;</span> Live Preview</h3>
+      <p>See exactly how your invoice will look as you type. What you see is what you get.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#128221;</span> Multiple Document Types</h3>
+      <p>Create Invoices, Bills, Receipts, Estimates, or Quotations — choose the document type that fits your needs.</p>
+    </div>
+    <div class="feature-card">
+      <h3><span class="feature-icon">&#128220;</span> Terms &amp; Conditions</h3>
+      <p>Add custom terms and conditions to your documents alongside notes for complete professional documentation.</p>
+    </div>
+  </div>
+
+  <h2>Who Is Send-Bills.com For?</h2>
+  <p>Our free invoice generator is perfect for freelancers, independent contractors, consultants, small business owners, startups, side hustlers, and anyone who needs to send a professional invoice quickly. Whether you are billing for web design, consulting services, photography, tutoring, or any other service — Send-Bills.com has you covered.</p>
+
+  <h2>How We Stay Free — Forever</h2>
+  <p>We operate on four principles that keep Send-Bills.com free without compromising your experience:</p>
+  <p><strong>Non-intrusive advertising</strong> — Tasteful ads from trusted partners help cover our infrastructure costs. We never interrupt your workflow or put ads inside your invoices.</p>
+  <p><strong>Client-side architecture</strong> — Your invoices are created in your browser, not on our servers. This keeps our operating costs extremely low, which means we don't need to charge you.</p>
+  <p><strong>Community growth</strong> — When you share Send-Bills.com with a colleague or friend, that's our marketing. Happy users are our best advocates.</p>
+  <p><strong>No venture capital pressure</strong> — We're not backed by investors demanding aggressive monetization. We built this to solve a real problem, not to extract value from the people we serve.</p>
+
+  <div class="cta-box">
+    <p><strong>Ready to create your first invoice?</strong></p>
+    <a href="index.html" class="cta-btn">Create Free Invoice Now</a>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="index.html">Invoice Generator</a>
+    <a href="invoice-history.html">Invoice History</a>
+    <a href="payment-settings.html">Payment Settings</a>
+      <a href="about.html">About Us</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="cookies-policy.html">Cookie Policy</a>
+      <a href="gdpr.html">GDPR</a>
+      <a href="ccpa.html">CCPA</a>
+      <a href="contact.html">Contact Us</a>
+  </div>
+  <p>&copy; 2026 Send-Bills.com — Free Invoice Generator. All rights reserved.</p>
+</div>
+<script src="cookie-consent.js"></script>
+<script src="site-protection.js"></script>
+</body>
+</html>

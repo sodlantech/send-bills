@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cookie Policy — Send-Bills.com | Free Invoice Generator</title>
+<meta name="description" content="Cookie Policy for Send-Bills.com. Learn about the cookies we use, how to control them, and your rights under GDPR, CCPA, LGPD, PIPEDA, and other privacy laws.">
+<meta name="keywords" content="cookie policy, cookies, privacy policy, GDPR, CCPA, cookie consent, Send-Bills.com cookies">
+<meta name="robots" content="index, follow">
+<meta name="robots" content="noai, noimageai">
+<meta name="AdsBot-Google" content="noindex">
+<meta http-equiv="X-Robots-Tag" content="noai, noimageai, nocache">
+<link rel="canonical" href="https://send-bills.com/cookies-policy.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D9488'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='900' fill='white'%3E%24%3C/text%3E%3Cpath d='M18 5l-4 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M14 17l-2 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827;line-height:1.7}
+  .navbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{font-size:20px;font-weight:800;color:#0D9488;display:flex;align-items:center;gap:8px;text-decoration:none}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-back{font-size:13px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 14px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-back:hover{background:#CCFBF1}
+  .content{max-width:740px;margin:0 auto;padding:48px 24px 80px}
+  h1{font-size:32px;font-weight:800;color:#111827;margin-bottom:8px}
+  .last-updated{font-size:13px;color:#9CA3AF;margin-bottom:32px}
+  h2{font-size:18px;font-weight:700;color:#0D9488;margin-top:32px;margin-bottom:12px}
+  p{font-size:15px;color:#374151;margin-bottom:16px}
+  ul{margin:0 0 16px 20px}
+  li{font-size:15px;color:#374151;margin-bottom:8px}
+  .footer{text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;font-size:12px;color:#9CA3AF;background:#fff}
+  .footer a{color:#0D9488;text-decoration:none}
+  .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+  .nav-right{display:flex;align-items:center;gap:10px}
+  .nav-login-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #CCFBF1;background:#F0FDFA;color:#0D9488;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .nav-login-btn:hover{background:#CCFBF1}
+  .nav-user-menu{display:none;align-items:center;gap:10px}
+  .nav-user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid #CCFBF1;object-fit:cover}
+  .nav-user-name{font-size:12px;font-weight:600;color:#111827;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-history-link{display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 12px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-history-link:hover{background:#CCFBF1}
+  .nav-signout-btn{font-size:11px;color:#9CA3AF;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 8px;border-radius:6px;transition:all .15s}
+  .nav-signout-btn:hover{background:#FEF2F2;color:#EF4444}
+  @media(max-width:600px){
+    .navbar{padding:0 10px;height:48px;gap:6px}
+    .nav-logo{font-size:15px;gap:5px}
+    .nav-logo svg{width:20px;height:20px}
+    .nav-right{gap:4px;flex-wrap:nowrap}
+    .nav-back{font-size:10px;padding:4px 6px;white-space:nowrap}
+    .nav-login-btn{padding:4px 6px;font-size:10px}
+    .nav-login-btn svg{width:12px;height:12px}
+    .nav-user-name{display:none}
+    .nav-history-link{padding:4px 6px;font-size:10px}
+    .nav-signout-btn{font-size:9px;padding:2px 4px}
+    .nav-user-avatar{width:24px;height:24px}
+    .content{padding:20px 12px 48px}
+    h1{font-size:22px}
+    h2{font-size:16px}
+    p{font-size:13px}
+    .footer-links{gap:8px}
+    .footer-links a{font-size:11px}
+    li{font-size:13px}
+  }
+  /* ===== SITE PROTECTION ===== */
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
+  img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
+  @media print{body{display:none!important}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="7" fill="#0D9488"/><text x="16" y="23" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="white">$</text><path d="M18 5l-4 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/><path d="M14 17l-2 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/></svg>
+    Send-Bills.com
+  </a>
+  <div class="nav-right">
+    <a href="invoice-history.html" class="nav-history-link" id="navHistoryLink">History</a>
+    <a href="index.html" class="nav-back">Back to Invoice Generator</a>
+    <button class="nav-login-btn" id="navLoginBtn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Sign in
+    </button>
+    <div class="nav-user-menu" id="navUserMenu">
+      <img class="nav-user-avatar" id="navUserAvatar" src="" alt="">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-signout-btn" onclick="signOutUser()">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <h1>Cookie Policy</h1>
+  <p class="last-updated">Last updated: March 18, 2026</p>
+
+  <p>At Send-Bills.com, we use cookies to enhance your experience and understand how you interact with our free invoice generator. This Cookie Policy explains what cookies are, how we use them, and your rights to control them under various privacy laws including GDPR, CCPA, LGPD, PIPEDA, and POPIA.</p>
+
+  <h2>1. What Are Cookies</h2>
+  <p>Cookies are small text files stored on your device that contain information about your browsing activity. They are widely used to make websites function properly, remember your preferences, and provide insights into user behavior. Cookies can be either "session cookies" (deleted when you close your browser) or "persistent cookies" (stored for a set period). Most web browsers allow you to control cookies through settings, and you can delete them at any time.</p>
+
+  <h2>2. How We Use Cookies</h2>
+  <p>We use cookies to achieve the following purposes:</p>
+  <ul>
+    <li><strong>Functionality:</strong> Enable core features of Send-Bills.com and remember your preferences across sessions</li>
+    <li><strong>Security:</strong> Prevent unauthorized access and protect against cross-site request forgery (CSRF)</li>
+    <li><strong>Analytics:</strong> Understand how users interact with our website and identify areas for improvement</li>
+    <li><strong>Advertising:</strong> Deliver relevant and personalized advertisements based on your interests</li>
+    <li><strong>User Experience:</strong> Maintain your login session and personalize content according to your preferences</li>
+  </ul>
+
+  <h2>3. Types of Cookies We Use</h2>
+
+  <h3>Essential Cookies (Required)</h3>
+  <p>Essential cookies are necessary for the website to function properly. These cookies enable you to navigate our site and use core features. We cannot disable essential cookies as they are required for security and functionality. These include:</p>
+  <ul>
+    <li><strong>Session Cookies:</strong> Temporary cookies that expire when you close your browser, used to maintain your session</li>
+    <li><strong>Authentication Tokens:</strong> Cookies that verify your identity when you sign in to your account</li>
+    <li><strong>CSRF Protection Cookies:</strong> Security tokens that prevent cross-site request forgery attacks</li>
+  </ul>
+  <p><em>Legal Basis:</em> We process these cookies based on the contractual necessity to provide our service and our legitimate interest in website security.</p>
+
+  <h3>Analytics Cookies</h3>
+  <p>We use Google Analytics to collect anonymized data about how you use our website. This helps us understand user behavior, improve our service, and optimize content. Google Analytics uses the following cookies:</p>
+  <ul>
+    <li><strong>_ga:</strong> Distinguishes unique users; persists for 2 years</li>
+    <li><strong>_gid:</strong> Tracks unique sessions; expires after 24 hours</li>
+    <li><strong>_gat:</strong> Used to throttle request rate; expires after 1 minute</li>
+  </ul>
+  <p>Google Analytics collects data such as pages visited, time on page, browser type, device type, and approximate geographic location (based on IP address). This data is anonymized and does not contain personal information. You can opt out of Google Analytics by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-Out Browser Add-on</a> or by adjusting your browser's "Do Not Track" settings.</p>
+  <p><em>Legal Basis:</em> We process these cookies based on your consent (which you provide through our cookie banner) and our legitimate interest in understanding website usage.</p>
+
+  <h3>Advertising Cookies</h3>
+  <p>We use Google AdSense and related advertising services to display relevant ads on our website. These advertising partners use cookies to serve personalized advertisements based on your browsing history and interests. Advertising cookies include:</p>
+  <ul>
+    <li><strong>__gads:</strong> Google advertising identifier; persists for 2 years</li>
+    <li><strong>__gpi:</strong> Google advertising tracking cookie; persists for 3 months</li>
+    <li><strong>IDE:</strong> DoubleClick cookie used for advertising targeting; persists for 2 years</li>
+    <li><strong>DSID:</strong> DoubleClick cookie for advertiser conversion tracking; persists for 2 weeks</li>
+  </ul>
+  <p>These cookies enable Google and its advertising partners to display ads that are relevant to your interests across multiple websites. You may see the same ads on different websites because these cookies track your interests across the web.</p>
+  <p><em>Legal Basis:</em> We process these cookies based on your consent through our cookie banner and our legitimate interest in website monetization.</p>
+
+  <h3>Functional Cookies</h3>
+  <p>Functional cookies remember your preferences and settings to provide a personalized experience. These cookies may persist across multiple sessions:</p>
+  <ul>
+    <li><strong>sb_lang:</strong> Remembers your language preference; persists for 1 year</li>
+    <li><strong>sb_cookie_consent:</strong> Records your cookie consent choices; persists for 1 year</li>
+  </ul>
+  <p><em>Legal Basis:</em> We process these cookies based on your consent and our legitimate interest in providing a customized user experience.</p>
+
+  <h2>4. Third-Party Cookies</h2>
+  <p>We work with third-party service providers who may place cookies on your device for analytics and advertising purposes. These partners include:</p>
+  <ul>
+    <li><strong>Google Analytics:</strong> Provides website usage analytics and visitor insights. Visit <a href="https://www.google.com/analytics/terms/" target="_blank" rel="noopener">Google Analytics Terms</a> for more information.</li>
+    <li><strong>Google AdSense:</strong> Serves personalized advertisements on our website. Visit <a href="https://www.google.com/adsense/" target="_blank" rel="noopener">Google AdSense</a> for more information.</li>
+    <li><strong>Google DoubleClick:</strong> Provides conversion tracking and advertising metrics. Visit <a href="https://support.google.com/adword" target="_blank" rel="noopener">Google Ads Support</a> for details.</li>
+    <li><strong>Firebase:</strong> Provides backend services and analytics. Visit <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase Privacy</a> for more information.</li>
+  </ul>
+  <p>We are not responsible for the privacy practices of these third parties. We recommend reviewing their privacy policies to understand how they use your data.</p>
+
+  <h2>5. Cookie Duration</h2>
+  <p>Different cookies have different lifespans:</p>
+  <ul>
+    <li><strong>Session Cookies:</strong> Deleted automatically when you close your browser (typically expire after 30 minutes of inactivity)</li>
+    <li><strong>Persistent Cookies:</strong> Remain on your device for a set period, ranging from days to years:
+      <ul>
+        <li>Analytics cookies: typically 1-2 years</li>
+        <li>Advertising cookies: typically 2 weeks to 2 years</li>
+        <li>Functional cookies: typically 1 year</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>6. How to Control Cookies</h2>
+
+  <h3>Our Cookie Banner</h3>
+  <p>When you first visit Send-Bills.com, we display a cookie consent banner. This banner allows you to:</p>
+  <ul>
+    <li>Accept all cookies</li>
+    <li>Reject non-essential cookies</li>
+    <li>Customize your preferences for each cookie category</li>
+  </ul>
+  <p>You can change your cookie preferences at any time by adjusting your choices through the banner or by contacting us. Your preferences are stored in the sb_cookie_consent cookie.</p>
+
+  <h3>Browser Settings</h3>
+  <p>Most web browsers provide tools to manage cookies. Here are instructions for common browsers:</p>
+
+  <h3>Google Chrome</h3>
+  <ol style="margin: 16px 0 16px 20px; padding: 0;">
+    <li>Open Chrome and click the Menu icon (three dots) in the top-right corner</li>
+    <li>Select "Settings"</li>
+    <li>Click "Privacy and security" in the left sidebar</li>
+    <li>Select "Cookies and other site data"</li>
+    <li>Choose your preferred option:
+      <ul style="margin: 8px 0 8px 20px;">
+        <li>"Allow all cookies" - Enable all cookies</li>
+        <li>"Block all cookies" - Disable all cookies (may break some website features)</li>
+        <li>"Block third-party cookies in Incognito" - Block third-party cookies only in private browsing</li>
+      </ul>
+    </li>
+    <li>To manage specific sites: Click "Manage exceptions" under "Sites that can always use cookies" or "Sites that cannot use cookies"</li>
+  </ol>
+
+  <h3>Mozilla Firefox</h3>
+  <ol style="margin: 16px 0 16px 20px; padding: 0;">
+    <li>Open Firefox and click the Menu icon (three horizontal lines) in the top-right corner</li>
+    <li>Select "Settings"</li>
+    <li>Click "Privacy & Security" in the left sidebar</li>
+    <li>Under "Cookies and Site Data," select your preferred option:
+      <ul style="margin: 8px 0 8px 20px;">
+        <li>"Allow cookies and site data from websites (recommended)" - Enable cookies</li>
+        <li>"Block cookies and site data" - Disable cookies</li>
+      </ul>
+    </li>
+    <li>To manage exceptions: Click "Manage Exceptions" under "Cookies and Site Data"</li>
+  </ol>
+
+  <h3>Apple Safari</h3>
+  <ol style="margin: 16px 0 16px 20px; padding: 0;">
+    <li>Open Safari and click "Safari" in the top menu bar</li>
+    <li>Select "Preferences"</li>
+    <li>Click the "Privacy" tab</li>
+    <li>Under "Cookies and website data," select:
+      <ul style="margin: 8px 0 8px 20px;">
+        <li>"Always allow" - Enable cookies</li>
+        <li>"Allow from websites I visit" - Allow cookies from visited sites only</li>
+        <li>"Never allow" - Disable cookies</li>
+      </ul>
+    </li>
+    <li>To clear cookies: Click "Manage Website Data" and select sites to remove</li>
+  </ol>
+
+  <h3>Microsoft Edge</h3>
+  <ol style="margin: 16px 0 16px 20px; padding: 0;">
+    <li>Open Edge and click the Menu icon (three dots) in the top-right corner</li>
+    <li>Select "Settings"</li>
+    <li>Click "Privacy, search, and services" in the left sidebar</li>
+    <li>Scroll to "Cookies and other site data"</li>
+    <li>Choose your preferred option:
+      <ul style="margin: 8px 0 8px 20px;">
+        <li>"Allow all cookies" - Enable cookies</li>
+        <li>"Block all cookies" - Disable cookies</li>
+        <li>"Block third-party cookies" - Allow first-party cookies only</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Opt-Out Links for Advertising</h3>
+  <p>You can opt out of personalized advertising from major networks using these resources:</p>
+  <ul>
+    <li><strong>Google Ads Settings:</strong> Visit <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener">Google Ads Settings</a> to manage your ad preferences</li>
+    <li><strong>Network Advertising Initiative (NAI):</strong> Visit <a href="https://optout.networkadvertising.org" target="_blank" rel="noopener">NAI Opt-Out</a> to opt out of cookies from NAI member companies</li>
+    <li><strong>Digital Advertising Alliance (DAA):</strong> Visit <a href="https://optout.aboutads.info" target="_blank" rel="noopener">DAA WebChoices</a> to manage your advertising preferences</li>
+  </ul>
+
+  <h2>7. Your Rights Under Different Laws</h2>
+
+  <h3>GDPR (European Union)</h3>
+  <p>If you are located in the European Union, the General Data Protection Regulation (GDPR) gives you the following rights regarding cookies and personal data:</p>
+  <ul>
+    <li><strong>Right to Consent:</strong> We obtain your explicit consent before placing non-essential cookies on your device through our cookie banner</li>
+    <li><strong>Right to Withdraw Consent:</strong> You can withdraw your consent to cookies at any time through your browser settings or by contacting us</li>
+    <li><strong>Right to Access:</strong> You can request access to all data we have collected through cookies and analytics</li>
+    <li><strong>Right to Deletion:</strong> You can request deletion of your data, and we will comply within 30 days</li>
+    <li><strong>Right to Object:</strong> You can object to the processing of your data for analytics or advertising purposes</li>
+    <li><strong>Right to Data Portability:</strong> You can request your data in a portable format</li>
+  </ul>
+  <p>To exercise any of these rights, please contact us at privacy@send-bills.com.</p>
+
+  <h3>CCPA (California, USA)</h3>
+  <p>If you are a California resident, the California Consumer Privacy Act (CCPA) provides you with the following rights:</p>
+  <ul>
+    <li><strong>Right to Know:</strong> You have the right to request what personal information we collect, including through cookies</li>
+    <li><strong>Right to Delete:</strong> You can request that we delete personal information we have collected</li>
+    <li><strong>Right to Opt-Out:</strong> You can opt out of the "sale" or "sharing" of your personal information for cross-context behavioral advertising</li>
+    <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your CCPA rights</li>
+  </ul>
+  <p>To submit a CCPA request, please contact us at privacy@send-bills.com. We will respond within 45 days of receiving your request.</p>
+
+  <h3>ePrivacy Directive (European Union)</h3>
+  <p>The ePrivacy Directive complements GDPR and requires:</p>
+  <ul>
+    <li><strong>Prior Consent Required:</strong> We must obtain your consent BEFORE placing any non-essential cookies on your device (through our cookie banner)</li>
+    <li><strong>Transparent Information:</strong> We provide clear information about what cookies we use and why</li>
+    <li><strong>Easy Withdrawal:</strong> You can easily withdraw your consent through browser settings</li>
+  </ul>
+
+  <h3>LGPD (Brazil)</h3>
+  <p>If you are located in Brazil, the Lei Geral de Proteção de Dados (LGPD) grants you:</p>
+  <ul>
+    <li><strong>Right to Consent:</strong> You must provide explicit consent before non-essential cookies are placed</li>
+    <li><strong>Right to Access Your Data:</strong> You can request information about the cookies and data we collect</li>
+    <li><strong>Right to Correct Inaccurate Data:</strong> You can request correction of inaccurate information</li>
+    <li><strong>Right to Deletion:</strong> You can request deletion of your data</li>
+    <li><strong>Right to Object:</strong> You can object to the processing of your data</li>
+  </ul>
+  <p>To exercise your rights, contact us at privacy@send-bills.com.</p>
+
+  <h3>POPIA (South Africa)</h3>
+  <p>If you are a South African resident, the Protection of Personal Information Act (POPIA) provides:</p>
+  <ul>
+    <li><strong>Right to Consent:</strong> You must provide consent before we collect your information through cookies</li>
+    <li><strong>Right to Access:</strong> You can request access to the personal information we have collected</li>
+    <li><strong>Right to Correction:</strong> You can request correction of inaccurate information</li>
+    <li><strong>Right to Erasure:</strong> You can request deletion of your information</li>
+    <li><strong>Right to Object:</strong> You can object to the processing of your information</li>
+  </ul>
+
+  <h3>PIPEDA (Canada)</h3>
+  <p>If you are a Canadian resident, the Personal Information Protection and Electronic Documents Act (PIPEDA) gives you:</p>
+  <ul>
+    <li><strong>Right to Consent:</strong> You must consent to the collection and use of personal information through cookies</li>
+    <li><strong>Right to Access:</strong> You can request access to personal information we have collected</li>
+    <li><strong>Right to Request Correction:</strong> You can request that we correct inaccurate information</li>
+    <li><strong>Right to Withdraw Consent:</strong> You can withdraw your consent at any time</li>
+  </ul>
+
+  <h2>8. Do Not Track Signals</h2>
+  <p>Some browsers include a "Do Not Track" (DNT) feature that signals your preference not to be tracked for advertising or analytics purposes. While we respect your privacy choices, our response to DNT signals depends on applicable laws:</p>
+  <ul>
+    <li><strong>In EU regions:</strong> We honor DNT signals in addition to our cookie consent banner</li>
+    <li><strong>In California:</strong> We treat DNT signals as a request to opt out of the sale/sharing of personal information</li>
+    <li><strong>Globally:</strong> We recommend managing cookies through your browser settings or our cookie banner for the best control</li>
+  </ul>
+
+  <h2>9. Updates to This Policy</h2>
+  <p>We may update this Cookie Policy from time to time to reflect changes in our cookie practices, technology, legal requirements, or other factors. We will notify you of any material changes by posting the updated policy on this page and updating the "Last updated" date. We encourage you to review this Cookie Policy periodically to stay informed about how we use cookies. Your continued use of Send-Bills.com after any changes constitutes your acceptance of the updated policy.</p>
+
+  <h2>10. Contact Us</h2>
+  <p>If you have questions about this Cookie Policy, want to exercise your privacy rights, or need to update your cookie preferences, please contact us:</p>
+  <ul>
+    <li><strong>Email:</strong> privacy@send-bills.com</li>
+    <li><strong>Contact Form:</strong> Visit our <a href="contact.html">Contact page</a></li>
+  </ul>
+  <p>We will respond to your inquiry within 30 days. If you are in the EU and believe your rights have been violated, you also have the right to lodge a complaint with your local data protection authority.</p>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="index.html">Invoice Generator</a>
+    <a href="invoice-history.html">Invoice History</a>
+    <a href="payment-settings.html">Payment Settings</a>
+    <a href="about.html">About Us</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="cookies-policy.html">Cookie Policy</a>
+      <a href="gdpr.html">GDPR</a>
+      <a href="ccpa.html">CCPA</a>
+    <a href="contact.html">Contact Us</a>
+  </div>
+  <p>&copy; 2026 Send-Bills.com — Free Invoice Generator. All rights reserved.</p>
+</div>
+<script src="cookie-consent.js"></script>
+<script src="site-protection.js"></script>
+</body>
+</html>

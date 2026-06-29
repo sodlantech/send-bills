@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Settings — Send-Bills.com | Connect Stripe & PayPal</title>
+<meta name="description" content="Connect your Stripe or PayPal account to accept online payments directly through your invoices on Send-Bills.com.">
+<meta name="robots" content="index, follow">
+<meta name="robots" content="noai, noimageai">
+<meta http-equiv="X-Robots-Tag" content="noai, noimageai, nocache">
+<link rel="canonical" href="https://send-bills.com/payment-settings.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230D9488'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='900' fill='white'%3E%24%3C/text%3E%3Cpath d='M18 5l-4 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M14 17l-2 10' stroke='%23FCD34D' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827;line-height:1.7}
+  .navbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .nav-logo{font-size:20px;font-weight:800;color:#0D9488;display:flex;align-items:center;gap:8px;text-decoration:none}
+  .nav-logo svg{width:24px;height:24px}
+  .nav-right{display:flex;align-items:center;gap:10px}
+  .nav-back{font-size:13px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 14px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-back:hover{background:#CCFBF1}
+  .nav-login-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid #CCFBF1;background:#F0FDFA;color:#0D9488;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .nav-login-btn:hover{background:#CCFBF1}
+  .nav-user-menu{display:none;align-items:center;gap:10px}
+  .nav-user-avatar{width:30px;height:30px;border-radius:50%;border:2px solid #CCFBF1;object-fit:cover}
+  .nav-user-name{font-size:12px;font-weight:600;color:#111827;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .nav-history-link{display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 12px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA;transition:all .15s}
+  .nav-history-link:hover{background:#CCFBF1}
+  .nav-signout-btn{font-size:11px;color:#9CA3AF;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 8px;border-radius:6px;transition:all .15s}
+  .nav-signout-btn:hover{background:#FEF2F2;color:#EF4444}
+  .content{max-width:700px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:28px;font-weight:800;margin-bottom:6px}
+  .subtitle{font-size:14px;color:#6B7280;margin-bottom:32px}
+  .gateway-card{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:28px;margin-bottom:20px;position:relative}
+  .gateway-card.connected{border-color:#A7F3D0}
+  .gateway-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .gateway-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900}
+  .stripe-logo{background:#635BFF;color:#fff}
+  .paypal-logo{background:#003087;color:#fff;font-size:14px}
+  .gateway-info h2{font-size:18px;font-weight:700;margin:0}
+  .gateway-info p{font-size:12px;color:#6B7280;margin:0}
+  .gateway-status{position:absolute;top:16px;right:20px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+  .gs-connected{background:#D1FAE5;color:#065F46}
+  .gs-not{background:#F3F4F6;color:#9CA3AF}
+  .form-group{margin-bottom:14px}
+  .form-group label{font-size:12px;font-weight:600;color:#6B7280;display:block;margin-bottom:4px}
+  .form-group input{width:100%;padding:10px 12px;border:1px solid #D1D5DB;border-radius:8px;font-family:inherit;font-size:14px;outline:none;transition:border-color .15s;background:#F9FAFB}
+  .form-group input:focus{border-color:#0D9488;background:#fff}
+  .form-group .hint{font-size:11px;color:#9CA3AF;margin-top:4px}
+  .btn-save{padding:10px 24px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+  .btn-save-stripe{background:#635BFF;color:#fff}
+  .btn-save-stripe:hover{background:#4B45C6}
+  .btn-save-paypal{background:#003087;color:#fff}
+  .btn-save-paypal:hover{background:#001F5C}
+  .btn-disconnect{background:#FEF2F2;color:#EF4444;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:8px}
+  .btn-disconnect:hover{background:#FEE2E2}
+  .how-it-works{background:#F0FDFA;border:1px solid #CCFBF1;border-radius:12px;padding:20px;margin-top:28px}
+  .how-it-works h3{font-size:15px;font-weight:700;color:#0D9488;margin-bottom:10px}
+  .how-it-works p{font-size:13px;color:#374151;margin-bottom:8px}
+  .how-it-works ol{margin:0 0 0 18px;font-size:13px;color:#374151}
+  .how-it-works li{margin-bottom:6px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#0D9488;color:white;padding:12px 24px;border-radius:10px;font-weight:600;font-size:13px;z-index:9999;transition:transform .3s ease;box-shadow:0 4px 16px rgba(13,148,136,.35)}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .login-prompt{text-align:center;padding:60px 24px;background:#fff;border-radius:16px;border:1px solid #E5E7EB}
+  .login-prompt .icon{font-size:48px;margin-bottom:16px}
+  .login-prompt h2{font-size:22px;font-weight:800;margin-bottom:8px}
+  .login-prompt p{font-size:14px;color:#6B7280;margin-bottom:24px}
+  .google-login-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 28px;border-radius:10px;border:1px solid #D1D5DB;background:#fff;color:#111827;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+  .footer{text-align:center;padding:32px 24px;border-top:1px solid #E5E7EB;font-size:12px;color:#9CA3AF;background:#fff}
+  .footer a{color:#0D9488;text-decoration:none}
+  .footer-links{display:flex;gap:20px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+  @media(max-width:600px){
+    .navbar{padding:0 10px;height:48px;gap:6px}
+    .nav-logo{font-size:15px;gap:5px}
+    .nav-logo svg{width:20px;height:20px}
+    .nav-right{gap:4px;flex-wrap:nowrap}
+    .nav-back{font-size:10px;padding:4px 6px;white-space:nowrap}
+    .nav-login-btn{padding:4px 6px;font-size:10px}
+    .nav-login-btn svg{width:12px;height:12px}
+    .nav-user-name{display:none}
+    .nav-history-link{padding:4px 6px;font-size:10px}
+    .nav-signout-btn{font-size:9px;padding:2px 4px}
+    .nav-user-avatar{width:24px;height:24px}
+    .content{padding:20px 12px 48px}
+    h1{font-size:22px}
+    p{font-size:13px}
+    .footer-links{gap:8px}
+    .footer-links a{font-size:11px}
+    .gateway-card{padding:16px}
+    .gateway-header{flex-direction:column;text-align:center;gap:8px}
+    .gateway-status{position:static;margin-bottom:8px}
+  }
+  body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+  input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
+  @media print{body{display:none!important}}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="7" fill="#0D9488"/><text x="16" y="23" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="white">$</text><path d="M18 5l-4 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/><path d="M14 17l-2 10" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round"/></svg>
+    Send-Bills.com
+  </a>
+  <div class="nav-right">
+    <a href="invoice-history.html" class="nav-history-link" id="navHistoryLink">History</a>
+    <a href="index.html" class="nav-back">Create Invoice</a>
+    <button class="nav-login-btn" id="navLoginBtn" onclick="signInWithGoogle()">Sign in</button>
+    <div class="nav-user-menu" id="navUserMenu">
+      <img class="nav-user-avatar" id="navUserAvatar" src="" alt="">
+      <span class="nav-user-name" id="navUserName"></span>
+      <button class="nav-signout-btn" onclick="signOutUser()">Sign out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <div id="loginPrompt" class="login-prompt" style="display:none">
+    <div class="icon">&#128274;</div>
+    <h2>Sign in to manage payments</h2>
+    <p>Connect your Stripe or PayPal to accept payments on your invoices.</p>
+    <button class="google-login-btn" onclick="signInWithGoogle()">Continue with Google</button>
+  </div>
+
+  <div id="settingsSection" style="display:none">
+    <h1>Payment Settings</h1>
+    <p class="subtitle">Connect your own Stripe or PayPal account to accept payments directly on your invoices. Your clients can pay online — you get paid instantly.</p>
+
+    <!-- STRIPE -->
+    <div class="gateway-card" id="stripeCard">
+      <span class="gateway-status gs-not" id="stripeStatus">Not Connected</span>
+      <div class="gateway-header">
+        <div class="gateway-logo stripe-logo">S</div>
+        <div class="gateway-info">
+          <h2>Stripe</h2>
+          <p>Accept credit/debit cards, Apple Pay, Google Pay</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Stripe Publishable Key</label>
+        <input type="text" id="stripePublishKey" placeholder="pk_live_...">
+        <div class="hint">Find this in your <a href="https://dashboard.stripe.com/apikeys" target="_blank" style="color:#635BFF">Stripe Dashboard</a> → Developers → API keys</div>
+      </div>
+      <div class="form-group">
+        <label>Stripe Secret Key</label>
+        <input type="password" id="stripeSecretKey" placeholder="sk_live_...">
+        <div class="hint">Required for creating payment links. Stored securely and never shown to clients.</div>
+      </div>
+      <button class="btn-save btn-save-stripe" onclick="saveStripe()">Connect Stripe</button>
+      <button class="btn-disconnect" id="btnDisconnectStripe" style="display:none" onclick="disconnectStripe()">Disconnect</button>
+    </div>
+
+    <!-- PAYPAL -->
+    <div class="gateway-card" id="paypalCard">
+      <span class="gateway-status gs-not" id="paypalStatus">Not Connected</span>
+      <div class="gateway-header">
+        <div class="gateway-logo paypal-logo">PP</div>
+        <div class="gateway-info">
+          <h2>PayPal</h2>
+          <p>Accept PayPal payments, Venmo, Pay Later</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>PayPal Client ID</label>
+        <input type="text" id="paypalClientId" placeholder="AY...">
+        <div class="hint">Find this in your <a href="https://developer.paypal.com/dashboard/applications/live" target="_blank" style="color:#003087">PayPal Developer Dashboard</a> → Apps & Credentials</div>
+      </div>
+      <div class="form-group">
+        <label>PayPal Email (for receiving payments)</label>
+        <input type="email" id="paypalEmail" placeholder="your@business.com">
+      </div>
+      <button class="btn-save btn-save-paypal" onclick="savePaypal()">Connect PayPal</button>
+      <button class="btn-disconnect" id="btnDisconnectPaypal" style="display:none" onclick="disconnectPaypal()">Disconnect</button>
+    </div>
+
+    <!-- AUTO PAYMENT REMINDERS -->
+    <div class="gateway-card" id="reminderCard">
+      <span class="gateway-status gs-not" id="reminderStatus">Disabled</span>
+      <div class="gateway-header">
+        <div class="gateway-logo" style="background:#D97706;color:#fff;font-size:20px">&#9200;</div>
+        <div class="gateway-info">
+          <h2>Auto Payment Reminders</h2>
+          <p>Remind clients before and after invoices are due — fully customizable</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <input type="checkbox" id="remindersEnabled" style="width:auto;cursor:pointer" onchange="toggleReminders()">
+        <label for="remindersEnabled" style="cursor:pointer;font-size:13px;font-weight:600;color:#374151">Enable automatic payment reminders</label>
+      </div>
+      <div id="reminderOptionsWrap" style="display:none">
+
+        <!-- BEFORE DUE DATE -->
+        <div style="background:#F0FDFA;border:1px solid #CCFBF1;border-radius:8px;padding:14px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:#0D9488;margin-bottom:8px">Before Due Date (Upcoming Payment Reminders)</div>
+          <div class="form-group">
+            <label>Send reminder before due date</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="remBefore5" checked style="width:auto"> 5 days before</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="remBefore3" style="width:auto"> 3 days before</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="remBefore1" style="width:auto"> 1 day before</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="remBefore0" style="width:auto"> On due date</label>
+            </div>
+            <div class="hint" style="margin-top:6px">Friendly reminders sent before payment is due. Great for recurring clients on monthly payments.</div>
+          </div>
+        </div>
+
+        <!-- AFTER DUE DATE -->
+        <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:14px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px">After Due Date (Overdue Reminders)</div>
+          <div class="form-group">
+            <label>Send overdue reminders</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="rem1" checked style="width:auto"> Day 1</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="rem7" checked style="width:auto"> Day 7</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="rem14" checked style="width:auto"> Day 14</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" id="rem30" checked style="width:auto"> Day 30</label>
+            </div>
+            <div class="hint" style="margin-top:6px">Tone escalates automatically: Friendly → Second Notice → Final Reminder → Urgent</div>
+          </div>
+        </div>
+
+        <!-- CUSTOM EMAIL CONTENT -->
+        <div style="background:#fff;border:1px solid #E5E7EB;border-radius:8px;padding:14px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px">Customize Reminder Emails</div>
+          <div class="form-group">
+            <label>Before-Due Reminder Subject</label>
+            <input type="text" id="remSubjectBefore" placeholder="Upcoming payment reminder: {invoice_num} from {company}">
+            <div class="hint">Use {invoice_num}, {company}, {amount}, {due_date}, {client_name} as placeholders</div>
+          </div>
+          <div class="form-group">
+            <label>Before-Due Reminder Message</label>
+            <textarea id="remMsgBefore" style="min-height:60px;resize:vertical" placeholder="Hi {client_name}, this is a friendly reminder that {invoice_num} for {amount} is due on {due_date}. Please arrange payment at your convenience. Thank you!"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Overdue Reminder Subject</label>
+            <input type="text" id="remSubjectOverdue" placeholder="Payment overdue: {invoice_num} — {days_overdue} days past due">
+          </div>
+          <div class="form-group">
+            <label>Overdue Reminder Message</label>
+            <textarea id="remMsgOverdue" style="min-height:60px;resize:vertical" placeholder="Hi {client_name}, this is a reminder that {invoice_num} for {amount} was due on {due_date} and is now {days_overdue} days overdue. Please process the payment as soon as possible."></textarea>
+          </div>
+          <div class="hint">Leave blank to use our professional default messages. Customized messages apply to all reminder levels.</div>
+        </div>
+
+        <button class="btn-save" style="background:#D97706;color:#fff" onclick="saveReminders()">Save Reminder Settings</button>
+      </div>
+    </div>
+
+    <!-- RECEIPT CUSTOMIZATION -->
+    <div class="gateway-card" id="receiptCard">
+      <span class="gateway-status gs-not" id="receiptStatus">Default</span>
+      <div class="gateway-header">
+        <div class="gateway-logo" style="background:#065F46;color:#fff;font-size:18px">&#10003;</div>
+        <div class="gateway-info">
+          <h2>Receipt Customization</h2>
+          <p>Customize the payment receipt your clients receive after paying</p>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Company Name (shown on receipt)</label>
+        <input type="text" id="receiptCompanyName" placeholder="Your Business Name">
+        <div class="hint">This appears as the sender name on the receipt email</div>
+      </div>
+      <div class="form-group">
+        <label>Statement Name (how it appears on card/bank statements)</label>
+        <input type="text" id="receiptStatementName" placeholder="e.g. YOURCOMPANY LLC">
+        <div class="hint">Helps clients recognize the charge on their bank/card statement</div>
+      </div>
+      <div class="form-group">
+        <label>Company Logo URL (for receipt email header)</label>
+        <input type="url" id="receiptLogoUrl" placeholder="https://yoursite.com/logo.png">
+        <div class="hint">Direct link to your logo image (PNG or JPG, max 200px wide recommended)</div>
+      </div>
+      <div class="form-group">
+        <label>Thank You Message</label>
+        <textarea id="receiptThankYou" style="min-height:60px;resize:vertical" placeholder="Thank you for your payment! We appreciate your business."></textarea>
+        <div class="hint">Shown prominently at the top of the receipt</div>
+      </div>
+      <div class="form-group">
+        <label>Additional Note (optional)</label>
+        <textarea id="receiptNote" style="min-height:60px;resize:vertical" placeholder="e.g. For questions about this charge, contact billing@yourcompany.com"></textarea>
+        <div class="hint">Appears at the bottom of the receipt — great for support info or return policies</div>
+      </div>
+      <button class="btn-save" style="background:#065F46;color:#fff" onclick="saveReceiptCustomization()">Save Receipt Settings</button>
+    </div>
+
+    <div class="how-it-works">
+      <h3>How Online Payments Work</h3>
+      <ol>
+        <li><strong>Connect</strong> your Stripe or PayPal account above (use your own keys — we never touch your money)</li>
+        <li><strong>Create</strong> an invoice as usual and download/send it</li>
+        <li><strong>Share</strong> the invoice link with your client — it includes a "Pay Now" button</li>
+        <li><strong>Get paid</strong> — money goes directly to your Stripe/PayPal account. Invoice status auto-updates to "Paid"</li>
+      </ol>
+      <p style="margin-top:12px;font-size:12px;color:#6B7280">Send-Bills.com never has access to your funds. Payments flow directly from your client to your payment account. Standard Stripe (2.9% + 30c) or PayPal fees apply.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="index.html">Invoice Generator</a>
+    <a href="invoice-history.html">Invoice History</a>
+    <a href="payment-settings.html">Payment Settings</a>
+    <a href="about.html">About Us</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="cookies-policy.html">Cookie Policy</a>
+      <a href="gdpr.html">GDPR</a>
+      <a href="ccpa.html">CCPA</a>
+      <a href="contact.html">Contact Us</a>
+  </div>
+  <p>&copy; 2026 Send-Bills.com — Free Invoice Generator. All rights reserved.</p>
+</div>
+
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+
+if(auth){
+  auth.onAuthStateChanged(async user=>{
+    currentUser=user;updateAuthUI();
+    if(user){
+      document.getElementById('loginPrompt').style.display='none';
+      document.getElementById('settingsSection').style.display='block';
+      await loadSettings();
+      await loadReminderSettings();
+      await loadReceiptCustomization();
+    } else {
+      document.getElementById('loginPrompt').style.display='block';
+      document.getElementById('settingsSection').style.display='none';
+    }
+  });
+} else {
+  document.getElementById('loginPrompt').style.display='block';
+}
+
+async function loadSettings(){
+  const s = await getPaymentSettings();
+  if(!s) return;
+  if(s.stripePublishKey){
+    document.getElementById('stripePublishKey').value=s.stripePublishKey;
+    document.getElementById('stripeSecretKey').value=s.stripeSecretKey?'••••••••••••••••':'';
+    document.getElementById('stripeStatus').textContent='Connected';
+    document.getElementById('stripeStatus').className='gateway-status gs-connected';
+    document.getElementById('stripeCard').classList.add('connected');
+    document.getElementById('btnDisconnectStripe').style.display='inline-block';
+  }
+  if(s.paypalClientId){
+    document.getElementById('paypalClientId').value=s.paypalClientId;
+    document.getElementById('paypalEmail').value=s.paypalEmail||'';
+    document.getElementById('paypalStatus').textContent='Connected';
+    document.getElementById('paypalStatus').className='gateway-status gs-connected';
+    document.getElementById('paypalCard').classList.add('connected');
+    document.getElementById('btnDisconnectPaypal').style.display='inline-block';
+  }
+}
+
+async function saveStripe(){
+  const pk=document.getElementById('stripePublishKey').value.trim();
+  const sk=document.getElementById('stripeSecretKey').value.trim();
+  if(!pk.startsWith('pk_')){showToast('Enter a valid Stripe Publishable Key (starts with pk_)');return}
+  if(sk&&!sk.startsWith('sk_')&&sk!=='••••••••••••••••'){showToast('Enter a valid Stripe Secret Key (starts with sk_)');return}
+  const data={stripePublishKey:pk};
+  if(sk&&sk!=='••••••••••••••••') data.stripeSecretKey=sk;
+  const ok=await savePaymentSettings(data);
+  if(ok){showToast('Stripe connected successfully!');await loadSettings()}
+  else showToast('Failed to save');
+}
+
+async function savePaypal(){
+  const cid=document.getElementById('paypalClientId').value.trim();
+  const email=document.getElementById('paypalEmail').value.trim();
+  if(!cid){showToast('Enter your PayPal Client ID');return}
+  const ok=await savePaymentSettings({paypalClientId:cid,paypalEmail:email});
+  if(ok){showToast('PayPal connected successfully!');await loadSettings()}
+  else showToast('Failed to save');
+}
+
+async function disconnectStripe(){
+  if(!confirm('Disconnect Stripe? Your clients will no longer be able to pay via card.'))return;
+  await savePaymentSettings({stripePublishKey:firebase.firestore.FieldValue.delete(),stripeSecretKey:firebase.firestore.FieldValue.delete()});
+  document.getElementById('stripePublishKey').value='';
+  document.getElementById('stripeSecretKey').value='';
+  document.getElementById('stripeStatus').textContent='Not Connected';
+  document.getElementById('stripeStatus').className='gateway-status gs-not';
+  document.getElementById('stripeCard').classList.remove('connected');
+  document.getElementById('btnDisconnectStripe').style.display='none';
+  showToast('Stripe disconnected');
+}
+
+async function disconnectPaypal(){
+  if(!confirm('Disconnect PayPal? Your clients will no longer be able to pay via PayPal.'))return;
+  await savePaymentSettings({paypalClientId:firebase.firestore.FieldValue.delete(),paypalEmail:firebase.firestore.FieldValue.delete()});
+  document.getElementById('paypalClientId').value='';
+  document.getElementById('paypalEmail').value='';
+  document.getElementById('paypalStatus').textContent='Not Connected';
+  document.getElementById('paypalStatus').className='gateway-status gs-not';
+  document.getElementById('paypalCard').classList.remove('connected');
+  document.getElementById('btnDisconnectPaypal').style.display='none';
+  showToast('PayPal disconnected');
+}
+
+// ===== REMINDER SETTINGS =====
+function toggleReminders(){
+  document.getElementById('reminderOptionsWrap').style.display = document.getElementById('remindersEnabled').checked ? 'block' : 'none';
+}
+
+async function loadReminderSettings(){
+  const s = await getReminderSettings();
+  if(!s) return;
+  if(s.enabled){
+    document.getElementById('remindersEnabled').checked = true;
+    document.getElementById('reminderOptionsWrap').style.display = 'block';
+    document.getElementById('reminderStatus').textContent = 'Active';
+    document.getElementById('reminderStatus').className = 'gateway-status gs-connected';
+    document.getElementById('reminderCard').classList.add('connected');
+  }
+  // Before-due days
+  if(s.beforeDueDays){
+    document.getElementById('remBefore5').checked = s.beforeDueDays.includes(5);
+    document.getElementById('remBefore3').checked = s.beforeDueDays.includes(3);
+    document.getElementById('remBefore1').checked = s.beforeDueDays.includes(1);
+    document.getElementById('remBefore0').checked = s.beforeDueDays.includes(0);
+  }
+  // Overdue days
+  if(s.reminderDays){
+    document.getElementById('rem1').checked = s.reminderDays.includes(1);
+    document.getElementById('rem7').checked = s.reminderDays.includes(7);
+    document.getElementById('rem14').checked = s.reminderDays.includes(14);
+    document.getElementById('rem30').checked = s.reminderDays.includes(30);
+  }
+  // Custom content
+  if(s.subjectBefore) document.getElementById('remSubjectBefore').value = s.subjectBefore;
+  if(s.msgBefore) document.getElementById('remMsgBefore').value = s.msgBefore;
+  if(s.subjectOverdue) document.getElementById('remSubjectOverdue').value = s.subjectOverdue;
+  if(s.msgOverdue) document.getElementById('remMsgOverdue').value = s.msgOverdue;
+}
+
+async function saveReminders(){
+  const enabled = document.getElementById('remindersEnabled').checked;
+  const beforeDueDays = [];
+  if(document.getElementById('remBefore5').checked) beforeDueDays.push(5);
+  if(document.getElementById('remBefore3').checked) beforeDueDays.push(3);
+  if(document.getElementById('remBefore1').checked) beforeDueDays.push(1);
+  if(document.getElementById('remBefore0').checked) beforeDueDays.push(0);
+  const days = [];
+  if(document.getElementById('rem1').checked) days.push(1);
+  if(document.getElementById('rem7').checked) days.push(7);
+  if(document.getElementById('rem14').checked) days.push(14);
+  if(document.getElementById('rem30').checked) days.push(30);
+  const ok = await saveReminderSettings({
+    enabled, beforeDueDays, reminderDays: days,
+    subjectBefore: document.getElementById('remSubjectBefore').value.trim(),
+    msgBefore: document.getElementById('remMsgBefore').value.trim(),
+    subjectOverdue: document.getElementById('remSubjectOverdue').value.trim(),
+    msgOverdue: document.getElementById('remMsgOverdue').value.trim()
+  });
+  if(ok){
+    showToast('Reminder settings saved!');
+    if(enabled){
+      document.getElementById('reminderStatus').textContent = 'Active';
+      document.getElementById('reminderStatus').className = 'gateway-status gs-connected';
+      document.getElementById('reminderCard').classList.add('connected');
+    } else {
+      document.getElementById('reminderStatus').textContent = 'Disabled';
+      document.getElementById('reminderStatus').className = 'gateway-status gs-not';
+      document.getElementById('reminderCard').classList.remove('connected');
+    }
+  }
+}
+
+// ===== RECEIPT CUSTOMIZATION =====
+async function loadReceiptCustomization(){
+  const s = await getReceiptSettings();
+  if(!s) return;
+  if(s.companyName) document.getElementById('receiptCompanyName').value = s.companyName;
+  if(s.statementName) document.getElementById('receiptStatementName').value = s.statementName;
+  if(s.logoUrl) document.getElementById('receiptLogoUrl').value = s.logoUrl;
+  if(s.thankYouMessage) document.getElementById('receiptThankYou').value = s.thankYouMessage;
+  if(s.receiptNote) document.getElementById('receiptNote').value = s.receiptNote;
+  if(s.companyName || s.statementName || s.thankYouMessage){
+    document.getElementById('receiptStatus').textContent = 'Customized';
+    document.getElementById('receiptStatus').className = 'gateway-status gs-connected';
+    document.getElementById('receiptCard').classList.add('connected');
+  }
+}
+
+async function saveReceiptCustomization(){
+  const data = {
+    companyName: document.getElementById('receiptCompanyName').value.trim(),
+    statementName: document.getElementById('receiptStatementName').value.trim(),
+    logoUrl: document.getElementById('receiptLogoUrl').value.trim(),
+    thankYouMessage: document.getElementById('receiptThankYou').value.trim(),
+    receiptNote: document.getElementById('receiptNote').value.trim()
+  };
+  const ok = await saveReceiptSettings(data);
+  if(ok){
+    showToast('Receipt settings saved!');
+    document.getElementById('receiptStatus').textContent = 'Customized';
+    document.getElementById('receiptStatus').className = 'gateway-status gs-connected';
+    document.getElementById('receiptCard').classList.add('connected');
+  }
+}
+</script>
+<script src="cookie-consent.js"></script>
+<script src="site-protection.js"></script>
+</body>
+</html>

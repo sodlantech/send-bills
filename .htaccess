@@ -1,0 +1,99 @@
+# ============================================================
+# .HTACCESS — Send-Bills.com
+# Server-level security, anti-scraping, headers
+# For Apache servers. For Nginx, convert to nginx.conf directives.
+# ============================================================
+
+# ===== SECURITY HEADERS =====
+<IfModule mod_headers.c>
+  # Prevent MIME type sniffing
+  Header set X-Content-Type-Options "nosniff"
+
+  # Prevent clickjacking
+  Header set X-Frame-Options "DENY"
+
+  # Enable XSS filter
+  Header set X-XSS-Protection "1; mode=block"
+
+  # Referrer policy
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Content Security Policy
+  Header set Content-Security-Policy "frame-ancestors 'none'; base-uri 'self';"
+
+  # Prevent caching of sensitive pages
+  Header set Cache-Control "no-store, no-cache, must-revalidate" env=no_cache
+
+  # Block AI crawlers via HTTP header
+  Header set X-Robots-Tag "noai, noimageai"
+
+  # Permissions Policy (disable camera, mic, geolocation for embeds)
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self)"
+</IfModule>
+
+# ===== BLOCK BAD BOTS BY USER AGENT =====
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Block AI crawlers
+  RewriteCond %{HTTP_USER_AGENT} (GPTBot|ChatGPT|CCBot|anthropic|Claude-Web|Bytespider|Diffbot|Google-Extended|PerplexityBot|cohere-ai|YouBot|AI2Bot|Amazonbot) [NC]
+  RewriteRule .* - [F,L]
+
+  # Block scrapers and download tools
+  RewriteCond %{HTTP_USER_AGENT} (HTTrack|WebCopier|SiteSnagger|Teleport|WebStripper|wget|curl|Scrapy|python-requests|Go-http-client|Java|libwww|lwp-trivial|Siteimprove) [NC]
+  RewriteRule .* - [F,L]
+
+  # Block empty user agents (automated requests)
+  RewriteCond %{HTTP_USER_AGENT} ^$ [NC]
+  RewriteRule .* - [F,L]
+
+  # Block access to sensitive files
+  RewriteRule ^firebase-config\.js$ - [F,L]
+  RewriteRule ^\.env$ - [F,L]
+  RewriteRule ^\.git - [F,L]
+
+  # Force HTTPS
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ===== BLOCK DIRECTORY LISTING =====
+Options -Indexes
+
+# ===== PROTECT CLOUD FUNCTIONS DIRECTORY =====
+<IfModule mod_authz_core.c>
+  <Directory "cloud-functions">
+    Require all denied
+  </Directory>
+</IfModule>
+
+# ===== BLOCK HOTLINKING OF IMAGES =====
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?send-bills\.com [NC]
+  RewriteRule \.(jpg|jpeg|png|gif|svg|webp)$ - [F,NC]
+</IfModule>
+
+# ===== RATE LIMITING (requires mod_evasive) =====
+# <IfModule mod_evasive20.c>
+#   DOSHashTableSize 3097
+#   DOSPageCount 5
+#   DOSSiteCount 50
+#   DOSPageInterval 1
+#   DOSSiteInterval 1
+#   DOSBlockingPeriod 600
+# </IfModule>
+
+# ===== COMPRESSION =====
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# ===== BROWSER CACHING =====
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/html "access plus 1 hour"
+</IfModule>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send-Bills.com — User Dashboard Preview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:#F8FAFB;color:#111827}
+.preview-label{background:#EF4444;color:#fff;text-align:center;padding:8px;font-size:12px;font-weight:700;letter-spacing:1px}
+.section-label{background:#0D9488;color:#fff;padding:12px 24px;font-size:14px;font-weight:700;margin-top:32px}
+
+/* Navbar */
+.navbar{background:#fff;border-bottom:1px solid #E5E7EB;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:20px;font-weight:800;color:#0D9488;display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-link{font-size:12px;font-weight:600;color:#0D9488;text-decoration:none;padding:6px 12px;border:1px solid #CCFBF1;border-radius:8px;background:#F0FDFA}
+.nav-link.active{background:#0D9488;color:#fff;border-color:#0D9488}
+.nav-link.blue{background:#DBEAFE;color:#1D4ED8;border-color:#BFDBFE}
+.nav-user{display:flex;align-items:center;gap:8px}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0D9488,#065F46);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800}
+.nav-name{font-size:12px;font-weight:600;color:#111827}
+.nav-signout{font-size:11px;color:#9CA3AF;cursor:pointer}
+
+/* Dashboard content */
+.content{max-width:1100px;margin:0 auto;padding:24px}
+h1{font-size:24px;font-weight:800;margin-bottom:4px}
+.subtitle{font-size:13px;color:#6B7280;margin-bottom:20px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:16px}
+.stat .label{font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px}
+.stat .value{font-size:22px;font-weight:800;color:#0D9488;margin-top:2px}
+.stat .value.green{color:#065F46}
+.stat .value.amber{color:#D97706}
+
+/* Invoice table */
+.table-wrap{background:#fff;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden;margin-bottom:24px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.5px;padding:12px 14px;background:#F9FAFB;border-bottom:1px solid #E5E7EB}
+td{padding:12px 14px;font-size:13px;color:#374151;border-bottom:1px solid #F3F4F6}
+tr:hover td{background:#F9FAFB}
+.inv-num{font-weight:700;color:#111827}
+.type-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:#F0FDFA;color:#0D9488;text-transform:uppercase}
+.amount{font-weight:700;color:#0D9488}
+.status{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+.status-paid{background:#D1FAE5;color:#065F46}
+.status-sent{background:#DBEAFE;color:#1D4ED8}
+.status-draft{background:#F3F4F6;color:#6B7280}
+.status-overdue{background:#FEE2E2;color:#991B1B}
+.actions{display:flex;gap:4px}
+.btn-sm{padding:4px 10px;border-radius:6px;border:none;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-view{background:#F0FDFA;color:#0D9488}
+.btn-status{background:#F3F4F6;color:#374151}
+.btn-send{background:#DBEAFE;color:#1D4ED8}
+.btn-del{background:#FEF2F2;color:#EF4444}
+
+/* Reports */
+.filters{background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px;margin-bottom:16px}
+.filters-title{font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.filter-row{display:flex;gap:10px;flex-wrap:wrap}
+.filter-item{flex:1;min-width:130px}
+.filter-item label{font-size:10px;font-weight:600;color:#6B7280;display:block;margin-bottom:3px}
+.filter-item select,.filter-item input{width:100%;padding:7px 10px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px;font-family:inherit}
+
+.report-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.rcard{border-radius:10px;padding:14px;text-align:center}
+.rcard .rlabel{font-size:10px;font-weight:700;text-transform:uppercase}
+.rcard .rvalue{font-size:20px;font-weight:800;margin-top:2px}
+.rcard-white{background:#fff;border:1px solid #E5E7EB}
+.rcard-white .rlabel{color:#9CA3AF}
+.rcard-white .rvalue{color:#111827}
+.rcard-green{background:#D1FAE5;border:1px solid #A7F3D0}
+.rcard-green .rlabel{color:#065F46}
+.rcard-green .rvalue{color:#065F46}
+.rcard-amber{background:#FEF3C7;border:1px solid #FDE68A}
+.rcard-amber .rlabel{color:#92400E}
+.rcard-amber .rvalue{color:#92400E}
+
+/* Payment settings preview */
+.gateway{background:#fff;border:1px solid #E5E7EB;border-radius:14px;padding:20px;margin-bottom:16px;position:relative}
+.gateway.connected{border-color:#A7F3D0}
+.gateway-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.gateway-logo{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900}
+.gateway-info h3{font-size:15px;font-weight:700;margin:0}
+.gateway-info p{font-size:11px;color:#6B7280;margin:0}
+.gateway-status{position:absolute;top:14px;right:16px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px}
+.gs-on{background:#D1FAE5;color:#065F46}
+.gs-off{background:#F3F4F6;color:#9CA3AF}
+
+.note{background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:12px;font-size:12px;color:#92400E;margin-top:16px}
+</style>
+</head>
+<body>
+
+<div class="preview-label">DASHBOARD PREVIEW — This is how your logged-in user dashboard looks</div>
+
+<!-- ===== SECTION 1: INVOICE HISTORY ===== -->
+<div class="section-label">INVOICE HISTORY PAGE (invoice-history.html)</div>
+
+<nav class="navbar">
+  <a class="nav-logo">
+    <svg viewBox="0 0 32 32" width="28" height="28"><rect width="32" height="32" rx="7" fill="#0D9488"/><text x="16" y="23" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="white">$</text></svg>
+    Send-Bills.com
+  </a>
+  <div class="nav-right">
+    <a class="nav-link active">Create Invoice</a>
+    <a class="nav-link blue">Payments</a>
+    <div class="nav-user">
+      <div class="nav-avatar">PS</div>
+      <span class="nav-name">Pushpender Sodlan</span>
+      <span class="nav-signout">Sign out</span>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <h1>Invoice History</h1>
+  <p class="subtitle">Manage invoices, update statuses, send to clients, and accept payments.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="label">Total</div><div class="value">47</div></div>
+    <div class="stat"><div class="label">Paid</div><div class="value green">31</div></div>
+    <div class="stat"><div class="label">Pending</div><div class="value amber">12</div></div>
+    <div class="stat"><div class="label">Total Revenue</div><div class="value">$84,320.00</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Number</th><th>Type</th><th>Client</th><th>Sales Person</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr><td class="inv-num">INV-4821</td><td><span class="type-badge">Invoice</span></td><td>Acme Corp</td><td>Sarah K.</td><td>2026-03-18</td><td class="amount">$3,450.00</td><td><span class="status status-paid">Paid</span></td><td class="actions"><button class="btn-sm btn-view">View</button><button class="btn-sm btn-status">Status</button><button class="btn-sm btn-send">Send</button></td></tr>
+        <tr><td class="inv-num">INV-4820</td><td><span class="type-badge">Estimate</span></td><td>TechFlow Inc</td><td>Mike R.</td><td>2026-03-17</td><td class="amount">$12,800.00</td><td><span class="status status-sent">Sent</span></td><td class="actions"><button class="btn-sm btn-view">View</button><button class="btn-sm btn-status">Status</button><button class="btn-sm btn-send">Send</button></td></tr>
+        <tr><td class="inv-num">INV-4819</td><td><span class="type-badge">Bill</span></td><td>Global Design Co</td><td>Sarah K.</td><td>2026-03-15</td><td class="amount">$950.00</td><td><span class="status status-overdue">Overdue</span></td><td class="actions"><button class="btn-sm btn-view">View</button><button class="btn-sm btn-status">Status</button><button class="btn-sm btn-send">Send</button></td></tr>
+        <tr><td class="inv-num">INV-4818</td><td><span class="type-badge">Receipt</span></td><td>Sunrise Media</td><td>Pushpender S.</td><td>2026-03-14</td><td class="amount">$2,100.00</td><td><span class="status status-paid">Paid</span></td><td class="actions"><button class="btn-sm btn-view">View</button><button class="btn-sm btn-status">Status</button><button class="btn-sm btn-send">Send</button></td></tr>
+        <tr><td class="inv-num">INV-4817</td><td><span class="type-badge">Invoice</span></td><td>Bright Solutions</td><td>Mike R.</td><td>2026-03-12</td><td class="amount">$5,600.00</td><td><span class="status status-draft">Draft</span></td><td class="actions"><button class="btn-sm btn-view">View</button><button class="btn-sm btn-status">Status</button><button class="btn-sm btn-send">Send</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- REPORTS SECTION -->
+  <h1 style="margin-top:32px">Reports & Analytics</h1>
+  <p class="subtitle" style="margin-bottom:16px">Filter and analyze your invoice data</p>
+
+  <div class="filters">
+    <div class="filters-title">Filters</div>
+    <div class="filter-row">
+      <div class="filter-item"><label>Sales Person</label><select><option>All</option><option>Sarah K.</option><option>Mike R.</option><option>Pushpender S.</option></select></div>
+      <div class="filter-item"><label>Status</label><select><option>All</option><option>Paid</option><option>Sent</option><option>Draft</option></select></div>
+      <div class="filter-item"><label>Month</label><select><option>All Months</option><option selected>March</option></select></div>
+      <div class="filter-item"><label>Min Amount</label><input type="text" placeholder="0"></div>
+      <div class="filter-item"><label>Max Amount</label><input type="text" placeholder="Any"></div>
+    </div>
+    <div class="filter-row" style="margin-top:8px">
+      <div class="filter-item"><label>From Date</label><input type="text" value="2026-03-01"></div>
+      <div class="filter-item"><label>To Date</label><input type="text" value="2026-03-19"></div>
+      <div class="filter-item"><label>Client</label><input type="text" placeholder="Search client..."></div>
+    </div>
+  </div>
+
+  <div class="report-cards">
+    <div class="rcard rcard-white"><div class="rlabel">Matching</div><div class="rvalue">47</div></div>
+    <div class="rcard rcard-white"><div class="rlabel">Total Amount</div><div class="rvalue">$84,320</div></div>
+    <div class="rcard rcard-green"><div class="rlabel">Paid</div><div class="rvalue">$67,450</div></div>
+    <div class="rcard rcard-amber"><div class="rlabel">Outstanding</div><div class="rvalue">$16,870</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Client</th><th>Sales Person</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="inv-num">INV-4821</td><td>Acme Corp</td><td>Sarah K.</td><td>2026-03-18</td><td class="amount">$3,450.00</td><td><span class="status status-paid">Paid</span></td></tr>
+        <tr><td class="inv-num">INV-4820</td><td>TechFlow Inc</td><td>Mike R.</td><td>2026-03-17</td><td class="amount">$12,800.00</td><td><span class="status status-sent">Sent</span></td></tr>
+        <tr><td class="inv-num">INV-4819</td><td>Global Design Co</td><td>Sarah K.</td><td>2026-03-15</td><td class="amount">$950.00</td><td><span class="status status-overdue">Overdue</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: PAYMENT SETTINGS ===== -->
+<div class="section-label">PAYMENT SETTINGS PAGE (payment-settings.html)</div>
+
+<div class="content">
+  <h1>Payment Settings</h1>
+  <p class="subtitle">Connect your own Stripe or PayPal account to accept payments directly on your invoices.</p>
+
+  <div class="gateway connected">
+    <span class="gateway-status gs-on">Connected</span>
+    <div class="gateway-header">
+      <div class="gateway-logo" style="background:#635BFF;font-size:16px">S</div>
+      <div class="gateway-info"><h3>Stripe</h3><p>Accept credit/debit cards, Apple Pay, Google Pay</p></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div style="flex:1;background:#F9FAFB;padding:8px 12px;border-radius:6px;font-size:12px;color:#6B7280">pk_live_••••••••••••Nx4T</div>
+      <button style="padding:6px 12px;border-radius:6px;background:#FEF2F2;color:#EF4444;border:none;font-size:11px;font-weight:600;cursor:pointer">Disconnect</button>
+    </div>
+  </div>
+
+  <div class="gateway connected">
+    <span class="gateway-status gs-on">Connected</span>
+    <div class="gateway-header">
+      <div class="gateway-logo" style="background:#003087;font-size:11px">PP</div>
+      <div class="gateway-info"><h3>PayPal</h3><p>Accept PayPal payments, Venmo, Pay Later</p></div>
+    </div>
+    <div style="background:#F9FAFB;padding:8px 12px;border-radius:6px;font-size:12px;color:#6B7280">AY••••••••••••8mK | billing@acmecorp.com</div>
+  </div>
+
+  <div class="gateway connected">
+    <span class="gateway-status gs-on">Active</span>
+    <div class="gateway-header">
+      <div class="gateway-logo" style="background:#D97706;font-size:16px">&#9200;</div>
+      <div class="gateway-info"><h3>Auto Payment Reminders</h3><p>Before-due + overdue reminders with custom content</p></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:#374151">
+      <span style="background:#D1FAE5;padding:3px 8px;border-radius:4px;font-weight:600;color:#065F46">5 days before</span>
+      <span style="background:#FEF3C7;padding:3px 8px;border-radius:4px;font-weight:600;color:#92400E">Day 1</span>
+      <span style="background:#FEF3C7;padding:3px 8px;border-radius:4px;font-weight:600;color:#92400E">Day 7</span>
+      <span style="background:#FEE2E2;padding:3px 8px;border-radius:4px;font-weight:600;color:#991B1B">Day 14</span>
+      <span style="background:#FEE2E2;padding:3px 8px;border-radius:4px;font-weight:600;color:#991B1B">Day 30</span>
+    </div>
+  </div>
+
+  <div class="gateway">
+    <span class="gateway-status gs-on" style="background:#D1FAE5;color:#065F46">Customized</span>
+    <div class="gateway-header">
+      <div class="gateway-logo" style="background:#065F46;font-size:16px">&#10003;</div>
+      <div class="gateway-info"><h3>Receipt Customization</h3><p>Your clients receive personalized payment receipts</p></div>
+    </div>
+    <div style="background:#F9FAFB;padding:10px 12px;border-radius:6px;font-size:12px;color:#6B7280;line-height:1.6">
+      Company: <strong style="color:#111827">Acme Corp LLC</strong><br>
+      Statement: <strong style="color:#111827">ACMECORP</strong><br>
+      Message: "Thank you for choosing Acme Corp! Your payment has been received."
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: FEATURES ONLY FOR LOGGED-IN USERS ===== -->
+<div class="section-label">LOGGED-IN FEATURES ON INVOICE FORM (index.html)</div>
+
+<div class="content">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px">
+      <h3 style="font-size:14px;font-weight:700;color:#0D9488;margin-bottom:10px">Saved Clients Dropdown</h3>
+      <select style="width:100%;padding:8px;border:1px solid #CCFBF1;border-radius:6px;font-size:12px;font-weight:600;color:#0D9488;background:#F0FDFA">
+        <option>Select saved client...</option>
+        <option>Acme Corp — john@acme.com</option>
+        <option>TechFlow Inc — billing@techflow.io</option>
+        <option>Global Design Co — ap@globaldesign.com</option>
+      </select>
+      <button style="margin-top:8px;padding:5px 10px;border:1px solid #0D9488;border-radius:6px;background:#fff;color:#0D9488;font-size:11px;font-weight:600;cursor:pointer">+ Save Client</button>
+    </div>
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px">
+      <h3 style="font-size:14px;font-weight:700;color:#0D9488;margin-bottom:10px">Saved Items Quick-Add</h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button style="padding:5px 10px;border:1px dashed #0D9488;border-radius:6px;background:#fff;color:#0D9488;font-size:11px;font-weight:600;cursor:pointer">+ Add from Saved Items</button>
+        <button style="padding:5px 10px;border:1px dashed #059669;border-radius:6px;background:#fff;color:#059669;font-size:11px;font-weight:600;cursor:pointer">Save Current Items</button>
+      </div>
+    </div>
+    <div style="background:#F0FDFA;border:1px solid #CCFBF1;border-radius:12px;padding:18px">
+      <h3 style="font-size:14px;font-weight:700;color:#0D9488;margin-bottom:10px">Sales Person</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input style="flex:1;padding:8px;border:1px solid #D1D5DB;border-radius:6px;font-size:13px" value="Sarah K.">
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6B7280;white-space:nowrap"><input type="checkbox" checked> Show on PDF</label>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px">
+      <h3 style="font-size:14px;font-weight:700;color:#0D9488;margin-bottom:10px">Recurring Invoice</h3>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#0D9488;cursor:pointer"><input type="checkbox" checked> Make this a recurring invoice</label>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <select style="flex:1;padding:6px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px"><option>Monthly</option></select>
+        <select style="flex:1;padding:6px;border:1px solid #D1D5DB;border-radius:6px;font-size:12px"><option>Yes — auto email</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:20px;background:#DBEAFE;border-color:#BFDBFE;color:#1D4ED8">
+    <strong>Note:</strong> These features (Saved Clients, Saved Items, Sales Person, Recurring Invoices, Reports, Payment Settings) are only visible to logged-in users. Guest visitors can only create invoices and download PDFs.
+  </div>
+</div>
+
+<div style="text-align:center;padding:40px;color:#9CA3AF;font-size:12px">
+  Dashboard Preview — Send-Bills.com
+</div>
+
+</body>
+</html>
