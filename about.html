@@ -53,7 +53,20 @@
   .nav-history-link:hover{background:#CCFBF1}
   .nav-signout-btn{font-size:11px;color:#9CA3AF;cursor:pointer;background:none;border:none;font-family:inherit;padding:4px 8px;border-radius:6px;transition:all .15s}
   .nav-signout-btn:hover{background:#FEF2F2;color:#EF4444}
+
+  /* Founder Profile Card */
+  .founder-card{display:flex;align-items:center;gap:24px;background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:24px;margin:24px 0 8px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .founder-photo{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #CCFBF1;flex-shrink:0;pointer-events:auto}
+  .founder-info h3{font-size:18px;font-weight:700;color:#111827;margin-bottom:4px}
+  .founder-info .founder-title{font-size:13px;font-weight:600;color:#0D9488;margin-bottom:8px}
+  .founder-info p{font-size:14px;color:#6B7280;margin:0;line-height:1.6}
+
   @media(max-width:600px){
+    .founder-card{flex-direction:column;text-align:center;padding:20px 16px}
+    .founder-photo{width:100px;height:100px}
+    .founder-info h3{font-size:16px}
+    .founder-info .founder-title{font-size:12px}
+    .founder-info p{font-size:13px}
     .features{grid-template-columns:1fr}
     .navbar{padding:0 10px;height:48px;gap:6px}
     .nav-logo{font-size:15px;gap:5px}
@@ -111,6 +124,16 @@
   <p class="subtitle">The simplest way to create professional invoices — completely free, no sign up required.</p>
 
   <h2>Our Story</h2>
+
+  <div class="founder-card">
+    <img src="pushpender-sodlan.jpg" alt="Pushpender Sodlan — Founder of Send-Bills.com" class="founder-photo">
+    <div class="founder-info">
+      <h3>Pushpender Sodlan</h3>
+      <p class="founder-title">Founder &amp; Developer</p>
+      <p>Built Send-Bills.com to solve a real problem — creating professional invoices should be instant, free, and require zero sign-up.</p>
+    </div>
+  </div>
+
   <p>Send-Bills.com was born from a real frustration. Our founder, <strong>Pushpender Sodlan</strong>, was running his own business when he needed to send a single invoice to a client. Something that simple shouldn't have been difficult — but it was. Every tool he found wanted him to create an account, enter a credit card, start a "14-day free trial," or pay $15-50/month for features he'd never use.</p>
 
   <p>That experience hit hard. It wasn't just inconvenient — it was slowing his business down. He lost time, he lost momentum, and he realized millions of freelancers, contractors, and small business owners face the exact same pain every day. Invoicing was being gatekept behind paywalls and forced sign-ups when it should be as simple as writing an email.</p>
