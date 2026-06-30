@@ -1,0 +1,2 @@
+# Redirect old cPanel default page to home
+/cgi-sys/*  /  301!
