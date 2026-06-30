@@ -13,12 +13,13 @@
 // ============================================================
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBuFJNIVFF4r6dH84gr7tqLvksOvTNiLt8",
+  authDomain: "send-bills-80a24.firebaseapp.com",
+  projectId: "send-bills-80a24",
+  storageBucket: "send-bills-80a24.firebasestorage.app",
+  messagingSenderId: "972257202575",
+  appId: "1:972257202575:web:0a1caa529e896d5333fbfa",
+  measurementId: "G-XB2LSQ6RNJ"
 };
 
 // Initialize Firebase (gracefully handle missing config)
