@@ -1,7 +1,7 @@
 # ============================================================
 # ROBOTS.TXT — Send-Bills.com
 # Block AI crawlers, scrapers, and unauthorized bots
-# Allow: Google, Bing, legitimate search engines
+# Allow: Google, Bing, legitimate search engines, SEO tools
 # ============================================================
 
 # Allow legitimate search engines
@@ -21,6 +21,34 @@ User-agent: Baiduspider
 Allow: /
 
 User-agent: YandexBot
+Allow: /
+
+# ===== ALLOW SEO TOOLS =====
+User-agent: SemrushBot
+Allow: /
+
+User-agent: AhrefsBot
+Allow: /
+
+User-agent: MJ12bot
+Allow: /
+
+User-agent: DotBot
+Allow: /
+
+User-agent: BLEXBot
+Allow: /
+
+User-agent: DataForSeoBot
+Allow: /
+
+User-agent: SEOkicks
+Allow: /
+
+User-agent: MegaIndex
+Allow: /
+
+User-agent: Sogou
 Allow: /
 
 # ===== BLOCK AI CRAWLERS =====
@@ -84,34 +112,7 @@ Disallow: /
 User-agent: Amazonbot
 Disallow: /
 
-# ===== BLOCK SCRAPERS & BAD BOTS =====
-User-agent: SemrushBot
-Disallow: /
-
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: MJ12bot
-Disallow: /
-
-User-agent: DotBot
-Disallow: /
-
-User-agent: BLEXBot
-Disallow: /
-
-User-agent: DataForSeoBot
-Disallow: /
-
-User-agent: SEOkicks
-Disallow: /
-
-User-agent: Sogou
-Disallow: /
-
-User-agent: MegaIndex
-Disallow: /
-
+# ===== BLOCK SITE COPIERS =====
 User-agent: HTTrack
 Disallow: /
 
@@ -136,7 +137,7 @@ Disallow: /
 User-agent: curl
 Disallow: /
 
-# Block everything else by default
+# Block sensitive paths for all other bots
 User-agent: *
 Disallow: /bot-trap
 Disallow: /admin
