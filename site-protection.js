@@ -61,7 +61,8 @@
     document.body.style.display='';
   });
 
-  // ===== 7. DEVTOOLS DETECTION =====
+  // ===== 7. DEVTOOLS DETECTION (desktop only — mobile triggers false positives) =====
+  var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   var devtoolsOpen = false;
   function checkDevTools(){
     var w = window.outerWidth - window.innerWidth > 160;
@@ -76,7 +77,7 @@
       location.reload();
     }
   }
-  setInterval(checkDevTools, 1000);
+  if(!isMobile){ setInterval(checkDevTools, 1000); }
 
   // ===== 8. ANTI-IFRAME / CLICKJACKING =====
   if(window.top !== window.self){
