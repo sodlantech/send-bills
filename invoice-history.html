@@ -509,6 +509,7 @@ function renderTable(){
       <td><span class="${getStatusClass(status)}">${status}</span></td>
       <td class="inv-actions">
         <button class="btn-action btn-view" onclick="viewInvoice(${idx})">View</button>
+              <button class="btn-action btn-view" onclick="editInvoice(${idx})" style="background:#EEF2FF;color:#4F46E5">Edit</button>
         <button class="btn-action btn-status" onclick="openStatusModal(${idx})">Status</button>
         <button class="btn-action btn-send" onclick="openSendModal(${idx})">Send</button>
         <button class="btn-action btn-delete" onclick="deleteInvoice('${inv.id}',${idx})">Del</button>
@@ -550,6 +551,32 @@ function viewInvoice(idx){
 
   openModal('viewModal');
 }
+
+    function editInvoice(idx) {
+      const inv = allInvoices[idx];
+      if (!inv) return;
+      // Build query string with invoice data to load into the main form
+      const params = new URLSearchParams();
+      params.set('edit', '1');
+      params.set('id', inv.id||'');
+      params.set('docType', inv.docType||'invoice');
+      params.set('num', inv.num||'');
+      params.set('date', inv.date||'');
+      params.set('due', inv.due||'');
+      params.set('currency', inv.currency||'');
+      params.set('fromName', inv.fromName||'');
+      params.set('fromEmail', inv.fromEmail||'');
+      params.set('fromAddr', inv.fromAddr||'');
+      params.set('toName', inv.toName||'');
+      params.set('toEmail', inv.toEmail||'');
+      params.set('toAddr', inv.toAddr||'');
+      params.set('taxRate', inv.taxRate||0);
+      params.set('notes', inv.notes||'');
+      params.set('terms', inv.terms||'');
+      params.set('items', JSON.stringify(inv.items||[]));
+      params.set('accentColor', inv.accentColor||'');
+      window.location.href = '/?'+params.toString();
+    }
 
 function copyShareLink(){
   const input = document.getElementById('viewShareLink');

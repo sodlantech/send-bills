@@ -2458,7 +2458,7 @@ async function downloadPDF() {
       fromName:d.fromName, fromEmail:d.fromEmail, fromAddr:d.fromAddr,
       toName:d.toName, toEmail:d.toEmail, toAddr:d.toAddr,
       items:d.items, sub:d.sub, totalDisc:d.totalDisc, taxRate:d.taxRate, taxAmt:d.taxAmt, grand:d.grand,
-      notes:d.notes, terms:d.terms, template:currentTemplate, accentColor:accentColor
+      notes:d.notes, terms:d.terms, template:currentTemplate, accentColor:accentColor, status:'Sent'
     };
     const fileName = d.docType+'_'+d.num+'.pdf';
 
@@ -2870,5 +2870,64 @@ function toggleFaq(el){
 </script>
 <script src="cookie-consent.js"></script>
 <script src="site-protection.js?v=2"></script>
+
+<script>
+// Handle edit mode - populate form from URL params
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('edit')!=='1') return;
+  window.addEventListener('DOMContentLoaded', function(){
+    setTimeout(function(){
+      function setVal(id, val){ const el=document.getElementById(id); if(el&&val){el.value=val;el.dispatchEvent(new Event('input',{bubbles:true}));} }
+      setVal('invoiceNumber', params.get('num'));
+      setVal('invoiceDate', params.get('date'));
+      setVal('dueDate', params.get('due'));
+      setVal('fromName', params.get('fromName'));
+      setVal('fromEmail', params.get('fromEmail'));
+      setVal('fromAddress', params.get('fromAddr'));
+      setVal('toName', params.get('toName'));
+      setVal('toEmail', params.get('toEmail'));
+      setVal('toAddress', params.get('toAddr'));
+      setVal('taxRate', params.get('taxRate'));
+      setVal('notes', params.get('notes'));
+      setVal('terms', params.get('terms'));
+      // Currency
+      const currSel = document.getElementById('currency');
+      if(currSel && params.get('currency')){ currSel.value=params.get('currency'); currSel.dispatchEvent(new Event('change',{bubbles:true})); }
+      // Accent color
+      if(params.get('accentColor') && typeof accentColor!=='undefined'){ accentColor=params.get('accentColor'); const cp=document.getElementById('accentPicker'); if(cp)cp.value=accentColor; }
+      // Items
+      try{
+        const items=JSON.parse(params.get('items')||'[]');
+        if(items.length){
+          // Clear existing items first
+          const container=document.getElementById('itemsContainer');
+          if(container) container.innerHTML='';
+          items.forEach(function(item,i){
+            if(typeof addItem==='function') addItem();
+            const rows=document.querySelectorAll('.item-row');
+            const row=rows[rows.length-1];
+            if(!row) return;
+            const inputs=row.querySelectorAll('input');
+            inputs.forEach(function(inp){
+              if(inp.name&&inp.name.includes('name')&&item.name) inp.value=item.name;
+              if(inp.name&&inp.name.includes('qty')&&item.qty) inp.value=item.qty;
+              if(inp.name&&inp.name.includes('price')&&item.price) inp.value=item.price;
+              if(inp.name&&inp.name.includes('desc')&&item.desc) inp.value=item.desc;
+              inp.dispatchEvent(new Event('input',{bubbles:true}));
+            });
+          });
+        }
+      }catch(e){ console.warn('Edit items parse error',e); }
+      // Store the Firestore doc ID for updating
+      window._editingInvoiceId = params.get('id');
+      // Scroll to form
+      const form = document.querySelector('.form-panel');
+      if(form) form.scrollIntoView({behavior:'smooth'});
+    }, 1500);
+  });
+})();
+</script>
+
 </body>
 </html>
