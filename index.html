@@ -952,7 +952,7 @@
   input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
   img{-webkit-user-drag:none;user-drag:none;pointer-events:none}
   /* Print: hide everything except invoice when printing is allowed */
-  @media print{
+  @media print{ @page{margin:0;size:auto;}
     body:not(.print-allowed){display:none!important}
     body.print-allowed .live-bar,
     body.print-allowed .navbar,
@@ -2360,10 +2360,11 @@ async function downloadPDF() {
     if(d.fromEmail) txt(d.fromEmail,m,y,{s:9,c:'#6B7280'});
     if(d.toEmail) txt(d.toEmail,w/2+8,y,{s:9,c:'#6B7280'});y+=4;
     const fl=(d.fromAddr||'').split('\n'),tl=(d.toAddr||'').split('\n');
-    for(let i=0;i<Math.max(fl.length,tl.length);i++){
-      if(fl[i])txt(fl[i],m,y,{s:9,c:'#6B7280'});
-      if(tl[i])txt(tl[i],w/2+8,y,{s:9,c:'#6B7280'});y+=4;
-    }
+    const _fw=w/2-m-4,_tw=w/2-m-8;const _wfl=[],_wtl=[];fl.forEach(function(l){doc.setFontSize(9);doc.splitTextToSize(l,_fw).forEach(function(s){_wfl.push(s)})});tl.forEach(function(l){doc.setFontSize(9);doc.splitTextToSize(l,_tw).forEach(function(s){_wtl.push(s)})});
+     for(let i=0;i<Math.max(_wfl.length,_wtl.length);i++){
+      if(_wfl[i])txt(_wfl[i],m,y,{s:9,c:'#6B7280'});
+      if(_wtl[i])txt(_wtl[i],w/2+8,y,{s:9,c:'#6B7280'});y+=4;
+     }
 
     y+=6;
     doc.setFillColor(240,253,250);doc.rect(m,y-3,w-m*2,9,'F');
@@ -2434,7 +2435,7 @@ async function downloadPDF() {
         try {
           const sigH = _sigSize * 0.35;
           const sigW = sigH * 3;
-          doc.addImage(signatureDataURL, 'PNG', w-m-sigW, y, sigW, sigH);
+          const _cS=await new Promise(r=>{const img=new Image();img.onload=()=>{const cv=document.createElement('canvas');cv.width=img.width;cv.height=img.height;const cx=cv.getContext('2d');cx.fillStyle='#FFFFFF';cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(img,0,0);r(cv.toDataURL('image/jpeg',0.8));};img.src=signatureDataURL;});doc.addImage(_cS,'JPEG', w-m-sigW, y, sigW, sigH);
           y += sigH + 2;
         } catch(e){}
       }
@@ -2447,8 +2448,7 @@ async function downloadPDF() {
     // Footer watermark
     const ph=doc.internal.pageSize.getHeight();
     doc.setDrawColor(220,220,220);doc.line(m,ph-16,w-m,ph-16);
-    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor('#B0B0B0');
-    doc.text('Powered by Send-Bills.com \u2014 Effortless Invoicing for Everyone | send-bills.com',w/2,ph-10,{align:'center'});
+
 
     // Store PDF + data for deferred save
     const invoicePayload = {
@@ -2500,7 +2500,7 @@ async function downloadPDF() {
     const img=new Image();
     img.onload=async ()=>{
       const r=img.width/img.height,h=12,iw=h*r;
-      doc.addImage(logoDataURL,'PNG',w-m-iw,10,iw,h);await gen();
+      const _cL=await new Promise(r=>{const img=new Image();img.onload=()=>{const cv=document.createElement('canvas');const mx=500;const sc=Math.min(1,mx/img.width);cv.width=img.width*sc;cv.height=img.height*sc;const cx=cv.getContext('2d');cx.fillStyle='#FFFFFF';cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(img,0,0,cv.width,cv.height);r(cv.toDataURL('image/jpeg',0.7));};img.src=logoDataURL;});doc.addImage(_cL,'JPEG',w-m-iw,10,iw,h);await gen();
     };img.src=logoDataURL;
   } else await gen();
 }
