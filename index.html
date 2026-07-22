@@ -2448,6 +2448,8 @@ async function downloadPDF() {
     // Footer watermark
     const ph=doc.internal.pageSize.getHeight();
     doc.setDrawColor(220,220,220);doc.line(m,ph-16,w-m,ph-16);
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor('#B0B0B0');
+    doc.text('Powered by send-bills.com',w/2,ph-10,{align:'center'});
 
 
     // Store PDF + data for deferred save
