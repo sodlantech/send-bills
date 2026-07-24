@@ -1227,6 +1227,14 @@
         <label>Address</label>
         <textarea id="fromAddress" placeholder="123 Business St, City, Country" oninput="renderPreview()"></textarea>
       </div>
+          <div class="form-group" style="margin-top:8px">
+            <label>GST Number <span style="font-weight:normal;color:#9CA3AF">(optional)</span></label>
+            <input type="text" id="fromGST" placeholder="e.g. 22AAAAA0000A1Z5" style="font-size:13px">
+          </div>
+          <div class="form-group" style="margin-top:8px">
+            <label>LUT Number <span style="font-weight:normal;color:#9CA3AF">(optional)</span></label>
+            <input type="text" id="fromLUT" placeholder="e.g. AD090000000000A" style="font-size:13px">
+          </div>
     </div>
 
     <!-- To -->
@@ -2164,7 +2172,7 @@ function getData() {
     due:document.getElementById('dueDate').value,
     c, fromName:document.getElementById('fromName').value,
     fromEmail:document.getElementById('fromEmail').value,
-    fromAddr:document.getElementById('fromAddress').value,
+    fromAddr:document.getElementById('fromAddress').value, fromGST:document.getElementById('fromGST').value, fromLUT:document.getElementById('fromLUT').value,
     toName:document.getElementById('toName').value,
     toEmail:document.getElementById('toEmail').value,
     toAddr:document.getElementById('toAddress').value,
@@ -2367,6 +2375,9 @@ async function downloadPDF() {
      }
 
     y+=6;
+    if(d.fromGST){txt('GST: '+d.fromGST,m,y,{s:8,c:'#6B7280'});y+=4;}
+    if(d.fromLUT){txt('LUT: '+d.fromLUT,m,y,{s:8,c:'#6B7280'});y+=4;}
+    if(d.fromGST||d.fromLUT){y+=2;}
     doc.setFillColor(240,253,250);doc.rect(m,y-3,w-m*2,9,'F');
     txt('Item',m+3,y+2,{s:8,st:'bold',c:ac});
     txt('Qty',m+95,y+2,{s:8,st:'bold',c:ac});
@@ -2458,7 +2469,7 @@ async function downloadPDF() {
       fromName:d.fromName, fromEmail:d.fromEmail, fromAddr:d.fromAddr,
       toName:d.toName, toEmail:d.toEmail, toAddr:d.toAddr,
       items:d.items, sub:d.sub, totalDisc:d.totalDisc, taxRate:d.taxRate, taxAmt:d.taxAmt, grand:d.grand,
-      notes:d.notes, terms:d.terms, template:currentTemplate, accentColor:accentColor, status:'Sent'
+      notes:d.notes, terms:d.terms, template:currentTemplate, accentColor:accentColor, status:'Sent', fromGST:d.fromGST, fromLUT:d.fromLUT
     };
     const fileName = d.docType+'_'+d.num+'.pdf';
 
