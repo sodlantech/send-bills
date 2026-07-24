@@ -2233,7 +2233,7 @@ function renderPreview() {
       <div style="text-align:right;font-size:12px;color:#6B7280;line-height:1.8"><strong style="color:#111827">Date:</strong> ${d.date}<br><strong style="color:#111827">Due:</strong> ${d.due}</div>
     </div>
     <div style="display:flex;gap:40px;margin-bottom:28px">
-      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}</div></div>
+      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bill To</div><div style="font-size:14px;font-weight:700">${esc(d.toName)||'Client Name'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
     </div>
     ${spLine}${tblHead}${totals}${notesHTML}${footerHTML}`;
@@ -2244,7 +2244,7 @@ function renderPreview() {
       <div style="text-align:right;color:rgba(255,255,255,.85);font-size:12px;line-height:1.8"><strong style="color:#fff"># ${esc(d.num)}</strong><br>Date: ${d.date}<br>Due: ${d.due}</div>
     </div>
     <div style="display:flex;gap:40px;margin-bottom:24px;padding:20px;background:#F9FAFB;border-radius:10px">
-      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}</div></div>
+      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="width:1px;background:#E5E7EB"></div>
       <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed To</div><div style="font-size:14px;font-weight:700">${esc(d.toName)||'Client Name'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
     </div>
@@ -2253,7 +2253,7 @@ function renderPreview() {
   } else if (currentTemplate === 'vat') {
     // GOODS / TRADE template — designed for product sellers, manufacturers, wholesalers
     html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div>${logo}<div style="font-size:13px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}</div></div>
+      <div>${logo}<div style="font-size:13px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="text-align:right"><div style="background:${ac};color:#fff;display:inline-block;padding:8px 18px;border-radius:6px;font-size:18px;font-weight:800;letter-spacing:1px">${esc(d.docType).toUpperCase()}</div><div style="font-size:11px;color:#9CA3AF;margin-top:6px"># ${esc(d.num)}</div></div>
     </div>
     <div style="display:flex;gap:16px;margin-bottom:20px">
@@ -2295,7 +2295,7 @@ function renderPreview() {
 
   } else if (currentTemplate === 'corporate') {
     html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div>${logo}<div style="font-size:14px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}</div></div>
+      <div>${logo}<div style="font-size:14px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="text-align:right"><div style="font-size:28px;font-weight:900;color:${ac};letter-spacing:-1px">${esc(d.docType).toUpperCase()}</div></div>
     </div>
     <div style="background:${ac};height:3px;border-radius:2px;margin-bottom:20px"></div>
