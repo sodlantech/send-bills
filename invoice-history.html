@@ -566,9 +566,13 @@ function viewInvoice(idx){
       params.set('currency', inv.currency||'');
       params.set('fromName', inv.fromName||'');
       params.set('fromEmail', inv.fromEmail||'');
+      params.set('fromPhone', inv.fromPhone||'');
+      params.set('fromGST', inv.fromGST||'');
+      params.set('fromLUT', inv.fromLUT||'');
       params.set('fromAddr', inv.fromAddr||'');
       params.set('toName', inv.toName||'');
       params.set('toEmail', inv.toEmail||'');
+      params.set('toPhone', inv.toPhone||'');
       params.set('toAddr', inv.toAddr||'');
       params.set('taxRate', inv.taxRate||0);
       params.set('notes', inv.notes||'');
