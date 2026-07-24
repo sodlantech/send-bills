@@ -1223,6 +1223,10 @@
           <input type="email" id="fromEmail" placeholder="you@company.com" oninput="renderPreview()">
         </div>
       </div>
+      <div class="form-group" style="margin-top:8px">
+        <label>Phone <span style="font-weight:normal;color:#9CA3AF">(optional)</span></label>
+        <input type="tel" id="fromPhone" placeholder="+1 234 567 8900" oninput="renderPreview()">
+      </div>
       <div class="form-group">
         <label>Address</label>
         <textarea id="fromAddress" placeholder="123 Business St, City, Country" oninput="renderPreview()"></textarea>
@@ -1255,6 +1259,10 @@
           <label>Email</label>
           <input type="email" id="toEmail" placeholder="client@example.com" oninput="renderPreview()">
         </div>
+      </div>
+      <div class="form-group" style="margin-top:8px">
+        <label>Phone <span style="font-weight:normal;color:#9CA3AF">(optional)</span></label>
+        <input type="tel" id="toPhone" placeholder="+1 234 567 8900" oninput="renderPreview()">
       </div>
       <div class="form-group">
         <label>Address</label>
@@ -2171,10 +2179,10 @@ function getData() {
     date:document.getElementById('invoiceDate').value,
     due:document.getElementById('dueDate').value,
     c, fromName:document.getElementById('fromName').value,
-    fromEmail:document.getElementById('fromEmail').value,
+    fromEmail:document.getElementById('fromEmail').value, fromPhone:document.getElementById('fromPhone').value,
     fromAddr:document.getElementById('fromAddress').value, fromGST:document.getElementById('fromGST').value, fromLUT:document.getElementById('fromLUT').value,
     toName:document.getElementById('toName').value,
-    toEmail:document.getElementById('toEmail').value,
+    toEmail:document.getElementById('toEmail').value, toPhone:document.getElementById('toPhone').value,
     toAddr:document.getElementById('toAddress').value,
     items,sub,totalDisc,afterDisc,taxRate,taxAmt,grand,
     notes:document.getElementById('notes').value,
@@ -2233,8 +2241,8 @@ function renderPreview() {
       <div style="text-align:right;font-size:12px;color:#6B7280;line-height:1.8"><strong style="color:#111827">Date:</strong> ${d.date}<br><strong style="color:#111827">Due:</strong> ${d.due}</div>
     </div>
     <div style="display:flex;gap:40px;margin-bottom:28px">
-      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
-      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bill To</div><div style="font-size:14px;font-weight:700">${esc(d.toName)||'Client Name'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
+      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}${d.fromPhone ? '<br>'+esc(d.fromPhone) : ''}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
+      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bill To</div><div style="font-size:14px;font-weight:700">${esc(d.toName)||'Client Name'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.toEmail)}${d.toPhone ? '<br>'+esc(d.toPhone) : ''}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
     </div>
     ${spLine}${tblHead}${totals}${notesHTML}${footerHTML}`;
 
@@ -2244,20 +2252,20 @@ function renderPreview() {
       <div style="text-align:right;color:rgba(255,255,255,.85);font-size:12px;line-height:1.8"><strong style="color:#fff"># ${esc(d.num)}</strong><br>Date: ${d.date}<br>Due: ${d.due}</div>
     </div>
     <div style="display:flex;gap:40px;margin-bottom:24px;padding:20px;background:#F9FAFB;border-radius:10px">
-      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
+      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed From</div><div style="font-size:14px;font-weight:700">${esc(d.fromName)||'Your Business'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.fromEmail)}${d.fromPhone ? '<br>'+esc(d.fromPhone) : ''}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="width:1px;background:#E5E7EB"></div>
-      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed To</div><div style="font-size:14px;font-weight:700">${esc(d.toName)||'Client Name'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
+      <div style="flex:1"><div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Billed To</div><div style="font-size:14px;font-weight:700">${esc(d.toName)||'Client Name'}</div><div style="font-size:12px;color:#6B7280;line-height:1.6;margin-top:2px">${esc(d.toEmail)}${d.toPhone ? '<br>'+esc(d.toPhone) : ''}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
     </div>
     ${spLine}${tblHead}${totals}${notesHTML}${footerHTML}`;
 
   } else if (currentTemplate === 'vat') {
     // GOODS / TRADE template — designed for product sellers, manufacturers, wholesalers
     html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div>${logo}<div style="font-size:13px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
+      <div>${logo}<div style="font-size:13px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}${d.fromPhone ? '<br>'+esc(d.fromPhone) : ''}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="text-align:right"><div style="background:${ac};color:#fff;display:inline-block;padding:8px 18px;border-radius:6px;font-size:18px;font-weight:800;letter-spacing:1px">${esc(d.docType).toUpperCase()}</div><div style="font-size:11px;color:#9CA3AF;margin-top:6px"># ${esc(d.num)}</div></div>
     </div>
     <div style="display:flex;gap:16px;margin-bottom:20px">
-      <div style="flex:1;background:#F9FAFB;padding:12px;border-radius:8px"><div style="font-size:9px;font-weight:700;color:${ac};text-transform:uppercase;margin-bottom:4px">Ship To / Bill To</div><div style="font-size:13px;font-weight:700">${esc(d.toName)||'Client'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
+      <div style="flex:1;background:#F9FAFB;padding:12px;border-radius:8px"><div style="font-size:9px;font-weight:700;color:${ac};text-transform:uppercase;margin-bottom:4px">Ship To / Bill To</div><div style="font-size:13px;font-weight:700">${esc(d.toName)||'Client'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.toEmail)}${d.toPhone ? '<br>'+esc(d.toPhone) : ''}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1">
         <div style="background:#F9FAFB;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#9CA3AF;font-weight:700;text-transform:uppercase">Date</div><div style="font-size:12px;font-weight:700">${d.date}</div></div>
         <div style="background:#F9FAFB;padding:8px;border-radius:6px;text-align:center"><div style="font-size:9px;color:#9CA3AF;font-weight:700;text-transform:uppercase">Due</div><div style="font-size:12px;font-weight:700">${d.due}</div></div>
@@ -2276,8 +2284,8 @@ function renderPreview() {
       <div style="font-size:13px;color:#6B7280">${esc(d.num)} &middot; ${d.date} &middot; Due ${d.due}</div>
     </div>
     <div style="display:flex;gap:40px;margin-bottom:28px;font-size:12px;color:#6B7280;line-height:1.6">
-      <div style="flex:1"><strong style="color:#111827">${esc(d.fromName)||'Your Business'}</strong><br>${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}</div>
-      <div style="flex:1"><strong style="color:#111827">${esc(d.toName)||'Client Name'}</strong><br>${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div>
+      <div style="flex:1"><strong style="color:#111827">${esc(d.fromName)||'Your Business'}</strong><br>${esc(d.fromEmail)}${d.fromPhone ? '<br>'+esc(d.fromPhone) : ''}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}</div>
+      <div style="flex:1"><strong style="color:#111827">${esc(d.toName)||'Client Name'}</strong><br>${esc(d.toEmail)}${d.toPhone ? '<br>'+esc(d.toPhone) : ''}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div>
     </div>
     <div style="border-top:1px solid #E5E7EB;margin-bottom:16px"></div>
     ${spLine}
@@ -2295,7 +2303,7 @@ function renderPreview() {
 
   } else if (currentTemplate === 'corporate') {
     html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div>${logo}<div style="font-size:14px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
+      <div>${logo}<div style="font-size:14px;font-weight:700;color:#111827;margin-top:4px">${esc(d.fromName)||'Your Business'}</div><div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.fromEmail)}${d.fromPhone ? '<br>'+esc(d.fromPhone) : ''}<br>${esc(d.fromAddr).replace(/\n/g,'<br>')}${d.fromGST ? '<br><span style="font-size:11px;color:#6B7280">GST: '+esc(d.fromGST)+'</span>' : ''}${d.fromLUT ? '<br><span style="font-size:11px;color:#6B7280">LUT: '+esc(d.fromLUT)+'</span>' : ''}</div></div>
       <div style="text-align:right"><div style="font-size:28px;font-weight:900;color:${ac};letter-spacing:-1px">${esc(d.docType).toUpperCase()}</div></div>
     </div>
     <div style="background:${ac};height:3px;border-radius:2px;margin-bottom:20px"></div>
@@ -2303,7 +2311,7 @@ function renderPreview() {
       <div style="flex:1;background:#F9FAFB;padding:14px;border-radius:8px;border-left:3px solid ${ac}">
         <div style="font-size:10px;font-weight:700;color:${ac};text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Bill To</div>
         <div style="font-size:13px;font-weight:700">${esc(d.toName)||'Client Name'}</div>
-        <div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.toEmail)}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div>
+        <div style="font-size:11px;color:#6B7280;line-height:1.5">${esc(d.toEmail)}${d.toPhone ? '<br>'+esc(d.toPhone) : ''}<br>${esc(d.toAddr).replace(/\n/g,'<br>')}</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1">
         <div style="background:#F9FAFB;padding:10px;border-radius:8px;text-align:center"><div style="font-size:9px;color:#9CA3AF;text-transform:uppercase;font-weight:700">Invoice #</div><div style="font-size:13px;font-weight:700;color:#111827">${esc(d.num)}</div></div>
@@ -2366,7 +2374,7 @@ async function downloadPDF() {
     txt(d.fromName||'',m,y,{s:11,st:'bold',c:'#111827'});
     txt(d.toName||'',w/2+8,y,{s:11,st:'bold',c:'#111827'});y+=5;
     if(d.fromEmail) txt(d.fromEmail,m,y,{s:9,c:'#6B7280'});
-    if(d.toEmail) txt(d.toEmail,w/2+8,y,{s:9,c:'#6B7280'});y+=4;
+    if(d.toEmail) txt(d.toEmail,w/2+8,y,{s:9,c:'#6B7280'});y+=4; if(d.fromPhone||d.toPhone){if(d.fromPhone) txt(d.fromPhone,m,y,{s:9,c:'#6B7280'}); if(d.toPhone) txt(d.toPhone,w/2+8,y,{s:9,c:'#6B7280'});y+=4;}
     const fl=(d.fromAddr||'').split('\n'),tl=(d.toAddr||'').split('\n');
     const _fw=w/2-m-4,_tw=w/2-m-8;const _wfl=[],_wtl=[];fl.forEach(function(l){doc.setFontSize(9);doc.splitTextToSize(l,_fw).forEach(function(s){_wfl.push(s)})});tl.forEach(function(l){doc.setFontSize(9);doc.splitTextToSize(l,_tw).forEach(function(s){_wtl.push(s)})});
      for(let i=0;i<Math.max(_wfl.length,_wtl.length);i++){
@@ -2466,8 +2474,8 @@ async function downloadPDF() {
     // Store PDF + data for deferred save
     const invoicePayload = {
       docType:d.docType, num:d.num, date:d.date, due:d.due, currency:d.c,
-      fromName:d.fromName, fromEmail:d.fromEmail, fromAddr:d.fromAddr,
-      toName:d.toName, toEmail:d.toEmail, toAddr:d.toAddr,
+      fromName:d.fromName, fromEmail:d.fromEmail, fromPhone:d.fromPhone, fromAddr:d.fromAddr,
+      toName:d.toName, toEmail:d.toEmail, toPhone:d.toPhone, toAddr:d.toAddr,
       items:d.items, sub:d.sub, totalDisc:d.totalDisc, taxRate:d.taxRate, taxAmt:d.taxAmt, grand:d.grand,
       notes:d.notes, terms:d.terms, template:currentTemplate, accentColor:accentColor, status:'Sent', fromGST:d.fromGST, fromLUT:d.fromLUT
     };
@@ -2895,9 +2903,11 @@ function toggleFaq(el){
       setVal('dueDate', params.get('due'));
       setVal('fromName', params.get('fromName'));
       setVal('fromEmail', params.get('fromEmail'));
+      setVal('fromPhone', params.get('fromPhone'));
       setVal('fromAddress', params.get('fromAddr'));
       setVal('toName', params.get('toName'));
       setVal('toEmail', params.get('toEmail'));
+      setVal('toPhone', params.get('toPhone'));
       setVal('toAddress', params.get('toAddr'));
       setVal('taxRate', params.get('taxRate'));
       setVal('notes', params.get('notes'));
